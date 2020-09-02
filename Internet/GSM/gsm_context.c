@@ -6,4 +6,3 @@ gsm_ctx_t * gsm_ctx(void)
 {
     return &m_gsm_ctx;
 }
-

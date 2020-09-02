@@ -530,10 +530,18 @@ httpc_init_connection_common(httpc_state_t **connection, const httpc_connection_
   LWIP_ASSERT("uri != NULL", uri != NULL);
 
   /* get request len */
+#if 0   // original
   req_len = httpc_create_request_string(settings, server_name, server_port, uri, use_host, NULL, 0);
   if ((req_len < 0) || (req_len > 0xFFFF)) {
     return ERR_VAL;
   }
+#else   // HuyTV
+  char tmp_buffer[256];
+  req_len = httpc_create_request_string(settings, server_name, server_port, uri, use_host, tmp_buffer, sizeof(tmp_buffer));
+  if ((req_len < 0) || (req_len > 0xFFFF)) {
+    return ERR_VAL;
+  }
+#endif
   /* alloc state and request in one block */
   alloc_len = sizeof(httpc_state_t);
 #if HTTPC_DEBUG_REQUEST

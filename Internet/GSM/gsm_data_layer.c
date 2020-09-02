@@ -42,7 +42,7 @@ ppp_pcb * gsm_data_layer_get_ppp_control_block(void)
  */
 static void ppp_link_status_cb(ppp_pcb *pcb, int err_code, void *ctx)
 {
-//	struct netif *pppif = ppp_netif(pcb);
+	struct netif *pppif = ppp_netif(pcb);
 	LWIP_UNUSED_ARG(ctx);
 
 	switch (err_code)
@@ -53,13 +53,13 @@ static void ppp_link_status_cb(ppp_pcb *pcb, int err_code, void *ctx)
 			//		const ip_addr_t *ns;
 			#endif /* LWIP_DNS */
 
-				DebugPrint("PPP Connected\r\n");
+            DebugPrint("PPP Connected\r\n");
 
 			#if PPP_IPV4_SUPPORT
 
-			//		DebugPrint("\tour_ipaddr  = %s\r\n", ipaddr_ntoa(&pppif->ip_addr));
-			//		DebugPrint("\this_ipaddr  = %s\r\n", ipaddr_ntoa(&pppif->gw));
-			//		DebugPrint("\tnetmask     = %s\r\n", ipaddr_ntoa(&pppif->netmask));
+            DebugPrint("our_ipaddr  = %s\r\n", ipaddr_ntoa(&pppif->ip_addr));
+            DebugPrint("his_ipaddr  = %s\r\n", ipaddr_ntoa(&pppif->gw));
+            DebugPrint("netmask    = %s\r\n", ipaddr_ntoa(&pppif->netmask));
 
 			#if LWIP_DNS
 			//		ns = dns_getserver(0);
@@ -114,7 +114,7 @@ static void ppp_link_status_cb(ppp_pcb *pcb, int err_code, void *ctx)
 		}
 		case PPPERR_AUTHFAIL:
 		{
-	//		DebugPrint("status_cb: Failed authentication challenge\r\n");
+			DebugPrint("status_cb: Failed authentication challenge\r\n");
 			break;
 		}
 		case PPPERR_PROTOCOL:
@@ -198,15 +198,28 @@ static void ppp_notify_phase_cb(ppp_pcb *pcb, u8_t phase, void *ctx)
 			DebugPrint("PPP_PHASE_INITIALIZE\r\n");
 			m_gsm_manager.ppp_phase = PPP_PHASE_INITIALIZE;
 			break;
-
+        
+        case PPP_PHASE_NETWORK:
+            DebugPrint("PPP_PHASE_NETWORK\r\n");
+            break;
+        
 		/* Session is running */
 		case PPP_PHASE_RUNNING:
 			DebugPrint("PPP_PHASE_RUNNING\r\n");
 			m_gsm_manager.ppp_phase = PPP_PHASE_RUNNING;
 			m_ppp_connected = true;
 			break;
-
+        
+        case  PPP_PHASE_TERMINATE:
+            DebugPrint("PPP_PHASE_TERMINATE\r\n");
+            break;
+        
+        case PPP_PHASE_DISCONNECT:
+            DebugPrint("PPP_PHASE_DISCONNECT\r\n");
+            break;
+        
 		default:
+            DebugPrint("PPP phase %d\r\n", phase);
 			break;
 	}
 }
@@ -436,14 +449,14 @@ static void gsm_power_on(gsm_response_evt_t event, void *response_buffer)
 				gsm_ctx()->gl_status.GSMCSQ = GSM_CSQ_INVALID;
 			}
 
-			if (gsm_ctx()->gl_status.GSMCSQ == GSM_CSQ_INVALID)
+			if (gsm_ctx()->gl_status.GSMCSQ == GSM_CSQ_INVALID || gsm_ctx()->gl_status.GSMCSQ == 0)
 			{
 				gsm_hw_send_at_cmd(AT_CSQ, AT_OK, 1000, 3, gsm_power_on);
 				m_gsm_manager.step = 12;
 			}
 			else
 			{
-				DebugPrint("CSQ: %d\r\n", gsm_ctx()->gl_status.GSMCSQ);
+				DebugPrint("Valid CSQ: %d\r\n", gsm_ctx()->gl_status.GSMCSQ);
 				m_gsm_manager.step = 0;
 				gsm_manager_ctx()->ready = 1;
 				gsm_hw_send_at_cmd(ATV1, AT_OK, 1000, 5, open_ppp_stack);
@@ -467,6 +480,7 @@ bool gsm_data_layer_is_ppp_connected(void)
 
 static void open_ppp_stack(gsm_response_evt_t event, void *response_buffer)
 {
+    DebugPrint("Open PPP stack\r\n");
     static uint8_t retry_count = 0;
 
     switch (m_gsm_manager.step)

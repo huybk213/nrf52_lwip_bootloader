@@ -25,7 +25,12 @@
 #include "nrf_bootloader_wdt.h"
 #include "update_firmware.h"
 
-volatile uint32_t m_timeout_10ms_tick = 0;
+#define TEST_OTA_IMG
+#define TEST_OTA_SERVER "nguyentrongbang9x.s3-ap-southeast-1.amazonaws.com"
+#define TEST_OTA_FILE   "/ble_app_uart_pca10056_s140_MD5.bin"
+#define TEST_OTA_PORT   80
+
+static app_ota_info_t m_ota_info;
 static volatile uint32_t m_sys_tick = 0;
 uint32_t sys_get_tick_ms(void);
 
@@ -91,18 +96,7 @@ static void board_gpio_initialize(void)
 
 void gsm_io_initialize()
 {
-    nrf_gpio_cfg_input(HW_GSM_RI_PIN, NRF_GPIO_PIN_PULLUP);
-    nrf_gpio_cfg_input(HW_GSM_NET_LIGHT_PIN, NRF_GPIO_PIN_PULLUP);
     nrf_gpio_cfg_input(HW_GSM_STATUS_PIN, NRF_GPIO_PIN_PULLDOWN);
-
-    nrf_gpio_cfg_output(GSM_MUTE_PIN_NUMBER);
-    nrf_gpio_pin_write(GSM_MUTE_PIN_NUMBER, 0);
-
-    //VBAT GSM
-    nrf_gpio_cfg_output(HW_GSM_PWR_CTRL_PIN);
-    nrf_gpio_pin_write(HW_GSM_PWR_CTRL_PIN, 0);
-    nrf_delay_ms(100);
-    nrf_gpio_pin_write(HW_GSM_PWR_CTRL_PIN, 1);
 
     //Power ON module
     nrf_gpio_cfg_output(HW_GSM_POWER_KEY_PIN);
@@ -128,19 +122,6 @@ static void board_clock_initialize( void )
 	NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
 	NRF_CLOCK->TASKS_HFCLKSTART = 1;
 	while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0);
-}
-
-static void task_10ms(void) 
-{	
-    gsm_hw_polling();
-    static uint32_t j = 0;
-    if (j++ == 10)
-    {
-        update_fw_polling_download_status();
-        j = 0;
-    }
-    
-    gsm_state_polling_task();
 }
 
 void do_ota_update(void)
@@ -182,6 +163,10 @@ void do_ota_update(void)
 
     while(1)
     {
+        gsm_hw_polling();
+
+        gsm_state_polling_task();
+    
         if (gsm_data_layer_is_ppp_connected())
         {
             nrf_gpio_pin_clear(HW_GPIO_LED_GSM_B_PIN);	    //ON
@@ -195,23 +180,33 @@ void do_ota_update(void)
                 * Main application must be write ota information to this address
                 * After reset, bootloader will check ota information and do ota process
                 */
-                app_ota_info_t * ota_config = (app_ota_info_t*)APPLICATION_OTA_INFORMATION;
                 
                 /* Enable HTTP and Download FW */
                 gsm_ctx()->file_transfer.state = FT_WAIT_TRANSFER_STATE;
 
                 /* Get http download URL information, HTTPS not supported */
                 /* Link http://abcefe.com/ota_image.bin =>> HTTP_Server =  abcefe.com, HTTP_File = /ota_image.bin*/
-
+#ifndef TEST_OTA_IMG
                 snprintf((char*)gsm_ctx()->file_transfer.server, sizeof(gsm_ctx()->file_transfer.server), 
                         "%s", 
-                        ota_config->http_server);
+                        m_ota_info.http_server);
                 
-                gsm_ctx()->file_transfer.port = ota_config->http_port;
+                gsm_ctx()->file_transfer.port = m_ota_info.http_port;
 
                 snprintf((char*)gsm_ctx()->file_transfer.file, sizeof(gsm_ctx()->file_transfer.file), 
                         "%s", 
-                        ota_config->http_file);
+                        m_ota_info.http_file);
+#else       // test lwip http download
+                snprintf((char*)gsm_ctx()->file_transfer.server, sizeof(gsm_ctx()->file_transfer.server), 
+                        "%s", 
+                        TEST_OTA_SERVER);
+                
+                gsm_ctx()->file_transfer.port = TEST_OTA_PORT;
+
+                snprintf((char*)gsm_ctx()->file_transfer.file, sizeof(gsm_ctx()->file_transfer.file), 
+                        "%s", 
+                        TEST_OTA_FILE);       
+#endif
             }
         }
         else
@@ -220,21 +215,16 @@ void do_ota_update(void)
             nrf_gpio_pin_set(HW_GPIO_LED_GSM_B_PIN);	    
         }
         
-        if(m_timeout_10ms_tick >= 10) 
-		{
-			task_10ms();
-            m_timeout_10ms_tick = 0;
-
-            /* Blink indicator led when device in bootloader state */
-            static uint32_t j = 0;
-            if (j++ == 5)
-            {
-                nrf_gpio_pin_toggle(HW_GPIO_LED_STATUS_R_PIN);
-                nrf_gpio_pin_toggle(HW_GPIO_LED_STATUS_B_PIN);  
-                j = 0;
-            }
-		}
+        static uint32_t led_tick = 0;
+        if (sys_now() - led_tick > 500)
+        {
+            led_tick = sys_get_tick_ms();
+            nrf_gpio_pin_toggle(HW_GPIO_LED_STATUS_R_PIN);
+            nrf_gpio_pin_toggle(HW_GPIO_LED_STATUS_B_PIN);
+            update_fw_polling_download_status();            
+        }
         
+        // Check OTA timeout
         if (sys_get_tick_ms() - ota_timeout > 1000000)
         {
             ota_timeout = sys_get_tick_ms();
@@ -246,6 +236,36 @@ void do_ota_update(void)
     }
 }
 
+//#define HTTPC_CLIENT_AGENT      "http_huytv"
+
+///* GET request basic */
+//#define HTTPC_REQ_11 "GET %s HTTP/1.1\r\n" /* URI */\
+//    "User-Agent: %s\r\n" /* User-Agent */ \
+//    "Accept: */*\r\n" \
+//    "Connection: Close\r\n" /* we don't support persistent connections, yet */ \
+//    "\r\n"
+//    
+///* GET request with host */
+//#define HTTPC_REQ_11_HOST "GET %s HTTP/1.1\r\n" /* URI */\
+//    "User-Agent: %s\r\n" /* User-Agent */ \
+//    "Accept: */*\r\n" \
+//    "Host: %s\r\n" /* server name */ \
+//    "Connection: Close\r\n" /* we don't support persistent connections, yet */ \
+//    "\r\n"
+//    
+//#define HTTPC_REQ_11_HOST_FORMAT(uri, srv_name) HTTPC_REQ_11_HOST, uri, HTTPC_CLIENT_AGENT, srv_name
+//#define HTTPC_REQ_11_FORMAT(uri) HTTPC_REQ_11, uri, HTTPC_CLIENT_AGENT
+
+//void test(void)
+//{
+//    char * uri = "/ble_app_uart_pca10056_s140_MD5.bin";
+//    char * server_name = "nguyentrongbang9x.s3-ap-southeast-1.amazonaws.com";
+//    uint32_t size = snprintf(NULL, 0, HTTPC_REQ_11_HOST_FORMAT(uri, server_name));
+//    DebugPrint("Size %d\r\n", size);
+
+//  return;
+//}
+
 int main(void)
 {        
     (void) NRF_LOG_INIT(nrf_bootloader_dfu_timer_counter_get);
@@ -255,7 +275,13 @@ int main(void)
     NRF_LOG_FLUSH();
     
     app_ota_info_t * ota_config = (app_ota_info_t*)APPLICATION_OTA_INFORMATION;
-    if (ota_config->ota_flag == APP_BOOTLOADER_OTA)
+    memcpy(&m_ota_info, ota_config, sizeof(app_ota_info_t));
+    
+#ifdef TEST_OTA_IMG
+    if (1)
+#else
+    if (ota_config->ota_flag == APP_BOOTLOADER_OTA)       // test ota
+#endif
     {
         nrf_bootloader_wdt_init();
         do_ota_update();
@@ -306,10 +332,6 @@ uint32_t sys_jiffies(void)
 void SysTick_Handler(void)  
 {
     m_sys_tick++;
-    if (m_sys_tick % 10 == 0)
-    {
-        m_timeout_10ms_tick++;
-    }
 }
 
 
@@ -318,14 +340,42 @@ uint32_t sys_get_tick_ms(void)
     return m_sys_tick;
 }
 
-void app_bootloader_set_ota_done(char * debug_info)
+uint32_t app_bootloader_get_download_address(void)
 {
+    if (m_ota_info.region == APP_OTA_REGION_0 || m_ota_info.region == APP_OTA_REGION_INVALID)
+    {
+        return APPLICATION_REGION_1_START_ADDDR;
+    }
+    return APPLICATION_REGION_0_START_ADDDR;
+}
+
+uint32_t app_bootloader_get_application_boot_address(void)
+{
+    if (m_ota_info.region == APP_OTA_REGION_0 || m_ota_info.region == APP_OTA_REGION_INVALID)
+    {
+        return APPLICATION_REGION_0_START_ADDDR;
+    }
+    return APPLICATION_REGION_1_START_ADDDR;
+}
+
+void app_bootloader_update_ota_address(void)
+{
+    m_ota_info.ota_flag = APP_BOOTLOADER_NORMAL;
+    if (m_ota_info.region == APP_OTA_REGION_0 || m_ota_info.region == APP_OTA_REGION_INVALID)
+    {
+        m_ota_info.region = APP_OTA_REGION_1;
+        return;
+    }
+    m_ota_info.region = APP_OTA_REGION_0;
+}
+
+void app_bootloader_ota_finish(char * debug_info)
+{
+    m_ota_info.ota_flag = APP_BOOTLOADER_NORMAL;
+    snprintf((char*)m_ota_info.debug_info, sizeof(m_ota_info.debug_info), "%s", debug_info);
+    
     nrf_nvmc_page_erase(APPLICATION_OTA_INFORMATION);
-    app_ota_info_t ota_config;
-    memset(&ota_config, 0, sizeof(app_ota_info_t));
-    ota_config.ota_flag = APP_BOOTLOADER_NORMAL;
-    snprintf((char*)ota_config.debug_info, sizeof(ota_config.debug_info), "%s", debug_info);
-    nrf_nvmc_write_bytes(APPLICATION_OTA_INFORMATION, (uint8_t*)&ota_config, sizeof(app_ota_info_t));
+    nrf_nvmc_write_bytes(APPLICATION_OTA_INFORMATION, (uint8_t*)&m_ota_info, sizeof(app_ota_info_t));
 }
 
 /*

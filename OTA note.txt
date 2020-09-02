@@ -1,7 +1,10 @@
-Cách tạo file bin
-1. Chèn 16 bytes MD5 checksum vào cuối cùng của file bin
-2. Chèn 16 bytes chữ kí vào đầu tiên file bin sau khi đã chèn checksum
-53 46 55 4C 2D 30 31 00 00 00 00 00 00 00 00 00 (chính là SFUL-01 NULL....)
+Cách tạo file bin để OTA - How to create firmware binary to OTA update
+
+1. Tính giá trị MD5 của firmware [Caculate MD5 firmware]
+- Chèn 16 bytes MD5 checksum vào cuối cùng của file bin
+2. Chèn 16 bytes chữ kí vào đầu tiên file bin sau khi đã chèn checksum [Insert 16 bytes signature in to the very first index of binary file]
+0x48 0x55 0x59 0x5F 0x54 0x56 0x5F 0x54 0x45 0x53 0x54 0x00 0x00 0x00 0x00 0x00
+(4855595f54565f544553540000000000)
 3. Tool check md5
 http://onlinemd5.com/
 4. Lưu ý file size

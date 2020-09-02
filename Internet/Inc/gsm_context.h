@@ -3,8 +3,10 @@
 
 #include "SEGGER_RTT.h"
 #include "app_bootloader_define.h"
+#include "nrf_log_ctrl.h"
 
 #define	DebugPrint(String...)	SEGGER_RTT_printf(0, String)
+#define DebugFlush()              NRF_LOG_FLUSH()
 //#define	DebugPrint(String...)	while(0)
 
 #define	BUFFER_STATE_BUSY   		1       // Trang thai dang them du lieu

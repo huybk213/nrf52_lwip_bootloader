@@ -44,6 +44,7 @@ static gsm_hw_config_t m_gsm_hw_config;
 void gsm_hw_initialize(gsm_hw_config_t * gsm_conf) 
 { 
     //        ASSERT(gsmConf);
+    DebugPrint("GSM hardware initialize\r\n");
     memcpy(&m_gsm_hw_config, gsm_conf, sizeof(gsm_hw_config_t));
 
     gsm_conf->gpio_initialize();
@@ -110,7 +111,7 @@ void gsm_hw_polling (void)
             }				
             else
             {
-                DebugPrint("Resend AT : %s\r\n",m_gsm_hw_buffer.at_cmd.cmd);
+                DebugPrint("Resend AT : %s\r\n", m_gsm_hw_buffer.at_cmd.cmd);
                 m_gsm_hw_config.serial_tx((uint8_t*)m_gsm_hw_buffer.at_cmd.cmd, strlen(m_gsm_hw_buffer.at_cmd.cmd));
             }			
         }
@@ -161,9 +162,9 @@ void gsm_hw_polling (void)
 
 
 void gsm_hw_send_at_cmd(char *cmd, char *expect_response, uint16_t timeout_ms, 
-					    uint8_t retry_cnt, gsm_send_AT_cb_t CallBackFunction)
+					    uint8_t retry_cnt, gsm_send_AT_cb_t callback)
 {
-    if (timeout_ms == 0 || CallBackFunction == NULL)
+    if (timeout_ms == 0 || callback == NULL)
     {
         m_gsm_hw_config.serial_tx((uint8_t*)cmd, strlen(cmd));
         return;
@@ -174,7 +175,7 @@ void gsm_hw_send_at_cmd(char *cmd, char *expect_response, uint16_t timeout_ms,
     m_gsm_hw_buffer.at_cmd.recv_buffer.BufferIndex = 0;
     m_gsm_hw_buffer.at_cmd.recv_buffer.State = BUFFER_STATE_IDLE;
     m_gsm_hw_buffer.at_cmd.retry_cnt_atc = retry_cnt;
-    m_gsm_hw_buffer.at_cmd.send_at_cb = CallBackFunction;
+    m_gsm_hw_buffer.at_cmd.send_at_cb = callback;
     m_gsm_hw_buffer.at_cmd.timeout_atc = timeout_ms / gsm_hw_get_config()->hw_polling_ms;	//gsm_hw_polling: 10ms /10, 100ms /100
     m_gsm_hw_buffer.at_cmd.current_timeout_atc = 0;
     
@@ -184,7 +185,7 @@ void gsm_hw_send_at_cmd(char *cmd, char *expect_response, uint16_t timeout_ms,
     
     m_gsm_hw_config.serial_tx((uint8_t*)cmd, strlen(cmd));
     
-//    DebugPrint("\r%s", cmd);
+    DebugPrint("\r\r\n%s\r\n", cmd);
 }
 
 
@@ -303,8 +304,20 @@ void gsm_hw_hardreset(gsm_power_on_cb_t cb)
             case 9: //Powerkey High
                 m_gsm_hw_config.io_set(m_gsm_hw_config.gpio.power_key, 0);
                 step = 0;
-                if (m_cb)
-                    m_cb();
+                
+                if (m_gsm_hw_config.io_get(m_gsm_hw_config.gpio.status_pin))
+                {
+                    DebugPrint("GSM power ready\r\n");
+                    if (m_cb)
+                            m_cb();
+                    last_power_state_is_up = true;
+                }
+                else
+                {
+                    DebugPrint("GSM power on failed\r\n");
+                    last_power_state_is_up = false;
+                }
+                
                 break;
 
             default:

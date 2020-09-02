@@ -107,7 +107,7 @@
 #define MEM_LIBC_MALLOC 1		//Giam duoc 1KB code size
 
 //to prevent assertion code being included => reduce code
-#define LWIP_NOASSERT  1		//Giam duoc vai chuc KB code size!
+//#define LWIP_NOASSERT  1		//Giam duoc vai chuc KB code size!
 
 
 //#define LWIP_NETCONN_FULLDUPLEX         LWIP_SOCKET
@@ -251,5 +251,8 @@
 //#define LWIP_MEM_ILLEGAL_FREE(msg)      /* to nothing */
 
 #define LWIP_PROVIDE_ERRNO
+#define HTTPC_DEBUG_REQUEST 0
+#define MEM_SIZE            (3200)
+#define HTTPC_CLIENT_AGENT      "huytv"
 
 #endif /* LWIP_HDR_LWIPOPTS_H */

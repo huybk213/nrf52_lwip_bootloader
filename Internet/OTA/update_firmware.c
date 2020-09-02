@@ -12,10 +12,10 @@
 
 static httpc_connection_t m_conn_settings_try;
 static uint8_t m_last_download_percent;
-static uint8_t m_firmware_signature[HEADER_SIZE] = "HUY_TV_TEST";
+static uint8_t m_firmware_signature[HEADER_SIZE] = { 0x48, 0x55, 0x59, 0x5F, 0x54, 0x56, 0x5F, 0x54, 0x45, 0x53, 0x54, 0x00, 0x00, 0x00, 0x00, 0x00 };
+static httpc_state_t *m_http_connection_state;
 
-
-static uint8_t update_fw_verify_checksum(uint32_t begin_addr, uint32_t size)
+static bool update_fw_verify_checksum(uint32_t begin_addr, uint32_t size)
 {
     DebugPrint("Caculate md5 from addr 0x%08X, size %d\r\n", begin_addr, size - MD5_LEN);
 	md5_context	md5_ctx;
@@ -24,10 +24,14 @@ static uint8_t update_fw_verify_checksum(uint32_t begin_addr, uint32_t size)
 	md5_starts(&md5_ctx);
 	md5_update(&md5_ctx, (uint8_t*)begin_addr, size - MD5_LEN);
 	md5_finish(&md5_ctx, md5_buffer);
+
 	uint32_t checksum_addr = begin_addr + size - MD5_LEN;
     uint8_t * md5_test = (uint8_t*)checksum_addr;
 	if (memcmp(md5_buffer, (uint8_t*)checksum_addr, MD5_LEN) == 0)
-		return 1;
+    {
+        DebugPrint("Valid md5\r\n");
+		return true;
+    }
 	else
     {
        	DebugPrint("Calculated %02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X, expected %02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X\r\n", 
@@ -35,7 +39,7 @@ static uint8_t update_fw_verify_checksum(uint32_t begin_addr, uint32_t size)
                    md5_buffer[8], md5_buffer[9], md5_buffer[10], md5_buffer[11], md5_buffer[12], md5_buffer[13], md5_buffer[14], md5_buffer[15],
                    md5_test, md5_test[1], md5_test[2], md5_test[3], md5_test[4], md5_test[5], md5_test[6], md5_test[7],
                    md5_test[8], md5_test[9], md5_test[10], md5_test[11], md5_test[12], md5_test[13], md5_test[14], md5_test[15]);
-		return 0;
+		return false;
     }
 }
 
@@ -62,7 +66,7 @@ static err_t httpc_file_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pb
 				if (memcmp(m_firmware_signature, payload, strlen((char*)m_firmware_signature)))
 				{
 					DebugPrint("Invalid header\r\n");
-					app_bootloader_set_ota_done("Invalid header");
+					app_bootloader_ota_finish("Invalid header");
 					NVIC_SystemReset();
 				}                    
 	//                DebugPrint("\rFirst 16 bytes %02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X\r\n", 
@@ -73,19 +77,19 @@ static err_t httpc_file_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pb
 				// We dont need to check write size > 16
 				payload += HEADER_SIZE;
 				write_size -= HEADER_SIZE;
-				uint32_t Address = APPLICATION_START_ADDDR;
+				uint32_t address = app_bootloader_get_download_address();
 				
-				DebugPrint("Erase data at addr 0x%08X to addr 0x%08X\r\n", Address, Address+ APPLICATION_MAX_FILE_SIZE);
+				DebugPrint("Erase data at addr 0x%08X to addr 0x%08X\r\n", address, address + APPLICATION_MAX_FILE_SIZE);
 				for (uint32_t i = 0; i < APPLICATION_MAX_FILE_SIZE/4096; i++)
 				{
-					nrf_nvmc_page_erase(Address);
-					Address += 4096;
+					nrf_nvmc_page_erase(address);
+					address += 4096;
 				}
 			}
 
 		if (write_size > 0)
 		{	
-			nrf_nvmc_write_bytes(APPLICATION_START_ADDDR + gsm_ctx()->file_transfer.size_downloaded, payload, write_size);
+			nrf_nvmc_write_bytes(app_bootloader_get_download_address() + gsm_ctx()->file_transfer.size_downloaded, payload, write_size);
 		}
 
 	//            DebugPrint("\rHTTP written: %u bytes, current addr 0x%08X, wr size %d\r\n", 
@@ -104,16 +108,19 @@ static err_t httpc_file_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pb
 		if (gsm_ctx()->file_transfer.size_downloaded >= gsm_ctx()->file_transfer.size.value)
 		{
 			DebugPrint("HTTP get file DONE. Transfers: %u\r\n", gsm_ctx()->file_transfer.size_downloaded);
-			if (update_fw_verify_checksum(APPLICATION_START_ADDDR, gsm_ctx()->file_transfer.size_downloaded))
+			if (update_fw_verify_checksum(app_bootloader_get_download_address(), gsm_ctx()->file_transfer.size_downloaded))
 			{
-				app_bootloader_set_ota_done("Success");
+                app_bootloader_update_ota_address();
+                DebugPrint("OTA success\r\n");
+				app_bootloader_ota_finish("Success");
 			}
 			else
 			{
 				DebugPrint("Invalid firmware\r\n");
-                app_bootloader_set_ota_done("Signature");
-				
+                app_bootloader_ota_finish("Signature");
 			}
+            
+            DebugFlush();
 			NVIC_SystemReset();
 							
 			tcp_close(tpcb);
@@ -139,6 +146,12 @@ static err_t httpc_file_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pb
 static void httpc_result_callback(void *arg, httpc_result_t httpc_result, u32_t rx_content_len, u32_t srv_res, err_t err)
 {
 	DebugPrint("result: %d, content len: %d, status code: %d\r\n", httpc_result, rx_content_len, srv_res);
+    if (rx_content_len == 0)
+    {
+        app_bootloader_ota_finish("Length");
+        DebugFlush();
+        NVIC_SystemReset();
+    }
 	
 	/* Xu ly loi connection */
 	switch(err)
@@ -146,9 +159,10 @@ static void httpc_result_callback(void *arg, httpc_result_t httpc_result, u32_t 
 		case HTTPC_RESULT_OK:		/** File successfully received */
             if (rx_content_len == gsm_ctx()->file_transfer.size.value)
             {
-				if (update_fw_verify_checksum(APPLICATION_START_ADDDR, gsm_ctx()->file_transfer.size_downloaded))
+				if (update_fw_verify_checksum(app_bootloader_get_download_address(), gsm_ctx()->file_transfer.size_downloaded))
 				{
-					app_bootloader_set_ota_done("Success");
+                    app_bootloader_update_ota_address();
+					app_bootloader_ota_finish("Success");
 				}
 				else
 				{
@@ -177,7 +191,10 @@ static void httpc_result_callback(void *arg, httpc_result_t httpc_result, u32_t 
 		case HTTPC_RESULT_LOCAL_ABORT:		/** Local abort */
 			//break;
 		case HTTPC_RESULT_ERR_CONTENT_LEN:		/** Content length mismatch */
+            app_bootloader_update_ota_address();
+            app_bootloader_ota_finish("Length");
             DebugPrint("Error content length\r\n");
+            DebugFlush();
 			NVIC_SystemReset();
 			break;
 		default:
@@ -194,7 +211,7 @@ static err_t httpc_headers_done_callback (httpc_state_t *connection, void *arg, 
     if (content_len > APPLICATION_MAX_FILE_SIZE + + HEADER_SIZE)
     {
         DebugPrint("Firmware size is too long [%d], maximum %d\r\n", content_len, APPLICATION_MAX_FILE_SIZE + HEADER_SIZE);
-        app_bootloader_set_ota_done("File size");
+        app_bootloader_ota_finish("File size");
         NVIC_SystemReset();
     }        
 	
@@ -208,7 +225,9 @@ void update_fw_http_polling(void)
 {
 	if (gsm_ctx()->file_transfer.state == FT_WAIT_TRANSFER_STATE)
 	{
-        DebugPrint("Begin http download\r\n");
+        DebugPrint("Begin http download %s%s port %d\r\n", gsm_ctx()->file_transfer.server, 
+                                                           gsm_ctx()->file_transfer.file, 
+                                                           gsm_ctx()->file_transfer.port);
 
 		gsm_ctx()->file_transfer.size_downloaded = 0;
 		
@@ -218,7 +237,7 @@ void update_fw_http_polling(void)
                                         (const char*)gsm_ctx()->file_transfer.file, 
                                         &m_conn_settings_try, httpc_file_recv_callback, 
                                         NULL, 
-                                        NULL);
+                                        &m_http_connection_state);
 		
 //		DebugPrint("\r\thttpc_get_file: %d", error);
 		
