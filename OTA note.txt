@@ -8,3 +8,4 @@ Cách tạo file bin để OTA - How to create firmware binary to OTA update
 3. Tool check md5
 http://onlinemd5.com/
 4. Lưu ý file size
+5. Bug in lwip http compiler keilC
