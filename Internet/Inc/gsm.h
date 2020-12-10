@@ -146,7 +146,7 @@ typedef struct
     uint32_t hw_polling_ms; // Should be 100ms
 } gsm_hw_config_t;
 
-typedef void (*gsm_send_AT_cb_t)(gsm_response_evt_t event, void *response_buffer);
+typedef void (*gsm_send_at_cb_t)(gsm_response_evt_t event, void *response_buffer);
 
 /**
  * @brief GSM hardware polling task
@@ -170,7 +170,7 @@ bool gsm_data_layer_is_ppp_connected(void);
  * @param]in] Callback to process response data or timeout event
  */
 void gsm_hw_send_at_cmd(char *cmd, char *expect_response, uint16_t timeout_ms,
-                        uint8_t retry_count, gsm_send_AT_cb_t callback);
+                        uint8_t retry_count, gsm_send_at_cb_t callback);
 
 /**
  * @brief Initialize gsm hardware

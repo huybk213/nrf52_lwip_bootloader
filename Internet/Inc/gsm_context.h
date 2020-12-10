@@ -52,7 +52,7 @@ typedef struct
     uint8_t buffer[SMALL_BUFFER_SIZE];
     uint16_t buffer_idx;
     uint8_t state;
-} SmallBuffer_t;
+} gsm_ctx_small_buffer_t;
 
 typedef enum
 {

@@ -20,8 +20,8 @@ typedef struct
     uint16_t timeout_atc;
     uint16_t current_timeout_atc;
     uint8_t retry_cnt_atc;
-    SmallBuffer_t recv_buffer;
-    gsm_send_AT_cb_t send_at_cb;
+    gsm_ctx_small_buffer_t recv_buffer;
+    gsm_send_at_cb_t send_at_cb;
 } gsm_at_cmd_t;
 
 typedef struct
@@ -161,7 +161,7 @@ void gsm_hw_polling_task(void)
 }
 
 void gsm_hw_send_at_cmd(char *cmd, char *expect_response, uint16_t timeout_ms,
-                        uint8_t retry_cnt, gsm_send_AT_cb_t callback)
+                        uint8_t retry_cnt, gsm_send_at_cb_t callback)
 {
     if (timeout_ms == 0 || callback == NULL)
     {
