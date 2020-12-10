@@ -1,5 +1,3 @@
-
-
 #ifndef APP_BOOTLOADER_DEFINE_H
 #define APP_BOOTLOADER_DEFINE_H
 
@@ -43,21 +41,21 @@ Example flash oganization for nRF52832 and Mesh application **
 |`MBR`                      | 0x00000 |
 */
 
-#define APPLICATION_REGION_0_START_ADDDR    (0x27000)
-#define APPLICATION_REGION_1_START_ADDDR    (0x87000)
-#define APPLICATION_MAX_FILE_SIZE           (96*4096)
-#define APPLICATION_BOOTLOADER_MAX_SIZE     (0x16000)
-#define APPLICATION_OTA_INFORMATION         (0xE7000)
+#define APPLICATION_REGION_0_START_ADDDR (0x27000)
+#define APPLICATION_REGION_1_START_ADDDR (0x87000)
+#define APPLICATION_MAX_FILE_SIZE (96 * 4096)
+#define APPLICATION_BOOTLOADER_MAX_SIZE (0x16000)
+#define APPLICATION_OTA_INFORMATION (0xE7000)
 
-#define HTTP_MAX_URL_SIZE       (96)
-#define HTTP_MAX_FILE_SIZE      (96)
+#define HTTP_MAX_URL_SIZE (96)
+#define HTTP_MAX_FILE_SIZE (96)
 #define HTTP_USER_NAME_MAX_SIZE (64)
-#define HTTP_PASSWORD_MAX_SIZE  (64)
-#define HTTP_DEBUG_MAX_SIZE     (32)
+#define HTTP_PASSWORD_MAX_SIZE (64)
+#define HTTP_DEBUG_MAX_SIZE (32)
 
 typedef enum
 {
-    APP_BOOTLOADER_NORMAL,      // Run normal application
+    APP_BOOTLOADER_NORMAL, // Run normal application
     APP_BOOTLOADER_OTA = 0x12345678
 } app_ota_flag_t;
 
@@ -65,7 +63,7 @@ typedef enum
 {
     APP_OTA_REGION_0,
     APP_OTA_REGION_1,
-    APP_OTA_REGION_INVALID = 0xFFFF     // 0xFFFFFFFF
+    APP_OTA_REGION_INVALID = 0xFFFF // 0xFFFFFFFF
 } app_ota_region_t;
 
 typedef struct __attribute((packed))
@@ -86,7 +84,6 @@ uint32_t app_bootloader_get_download_address(void);
 
 uint32_t app_bootloader_get_application_boot_address(void);
 
-void app_bootloader_ota_finish(char * debug_info);
+void app_bootloader_ota_finish(char *debug_info);
 
 #endif // APP_BOOTLOADER_DEFINE_H
-

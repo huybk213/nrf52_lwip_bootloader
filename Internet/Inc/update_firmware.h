@@ -3,7 +3,6 @@
 
 #include "gsm_context.h"
 
-
 /**
  * @brief HTTP download task
  */
@@ -20,4 +19,3 @@ void update_fw_polling_download_status(void);
 void update_fw_initialize(void);
 
 #endif /* UPDATE_FIRMWARE_H */
-
