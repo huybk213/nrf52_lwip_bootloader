@@ -42,16 +42,16 @@ typedef union
 
 typedef struct
 {
-    uint8_t Buffer[LARGE_BUFFER_SIZE];
-    uint16_t BufferIndex;
-    uint8_t State;
+    uint8_t buffer[LARGE_BUFFER_SIZE];
+    uint16_t buffer_idx;
+    uint8_t state;
 } LargeBuffer_t;
 
 typedef struct
 {
-    uint8_t Buffer[SMALL_BUFFER_SIZE];
-    uint16_t BufferIndex;
-    uint8_t State;
+    uint8_t buffer[SMALL_BUFFER_SIZE];
+    uint16_t buffer_idx;
+    uint8_t state;
 } SmallBuffer_t;
 
 typedef enum
@@ -76,22 +76,21 @@ typedef struct
 
 typedef struct
 {
-	uint8_t ConnectOK;
-    uint8_t GSMCSQ;
+    uint8_t gsm_csq;
 } gsm_ctx_status_t;	
 
 
 typedef struct
 {
-    char GSM_IMEI[GSM_IMEI_MAX_LENGTH];
-    char SIM_IMEI[GSM_IMEI_MAX_LENGTH];
+    char gsm_imei[GSM_IMEI_MAX_LENGTH];
+    char sim_imei[GSM_IMEI_MAX_LENGTH];
 } gsm_ctx_param_t;
 
 typedef struct
 {
 	gsm_ctx_status_t gl_status;	
 	gsm_ctx_file_transfer_t file_transfer;
-    gsm_ctx_param_t Parameters;
+    gsm_ctx_param_t parameters;
 } gsm_ctx_t;
 
 /**

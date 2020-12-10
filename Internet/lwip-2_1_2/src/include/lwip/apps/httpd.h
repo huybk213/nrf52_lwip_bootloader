@@ -58,7 +58,7 @@ extern "C" {
  * This function is called each time the HTTPD server is asked for a file
  * whose name was previously registered as a CGI function using a call to
  * http_set_cgi_handlers. The iIndex parameter provides the index of the
- * CGI within the cgis array passed to http_set_cgi_handlers. Parameters
+ * CGI within the cgis array passed to http_set_cgi_handlers. parameters
  * pcParam and pcValue provide access to the parameters provided along with
  * the URI. iNumParams provides a count of the entries in the pcParam and
  * pcValue arrays. Each entry in the pcParam array contains the name of a

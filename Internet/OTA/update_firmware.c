@@ -221,7 +221,7 @@ static err_t httpc_headers_done_callback (httpc_state_t *connection, void *arg, 
 	return ERR_OK;
 }
 
-void update_fw_http_polling(void)
+void update_fw_http_polling_task(void)
 {
 	if (gsm_ctx()->file_transfer.state == FT_WAIT_TRANSFER_STATE)
 	{

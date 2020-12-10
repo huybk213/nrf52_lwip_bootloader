@@ -7,7 +7,7 @@
 /**
  * @brief HTTP download task
  */
-void update_fw_http_polling(void);
+void update_fw_http_polling_task(void);
 
 /**
  * @brief Polling file download status

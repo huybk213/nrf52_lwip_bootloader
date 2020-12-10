@@ -48,7 +48,7 @@
 static const int err_to_errno_table[] = {
   0,             /* ERR_OK          0      No error, everything OK. */
   ENOMEM,        /* ERR_MEM        -1      Out of memory error.     */
-  ENOBUFS,       /* ERR_BUF        -2      Buffer error.            */
+  ENOBUFS,       /* ERR_BUF        -2      buffer error.            */
   EWOULDBLOCK,   /* ERR_TIMEOUT    -3      Timeout                  */
   EHOSTUNREACH,  /* ERR_RTE        -4      Routing problem.         */
   EINPROGRESS,   /* ERR_INPROGRESS -5      Operation in progress    */
@@ -80,7 +80,7 @@ err_to_errno(err_t err)
 static const char *err_strerr[] = {
   "Ok.",                    /* ERR_OK          0  */
   "Out of memory error.",   /* ERR_MEM        -1  */
-  "Buffer error.",          /* ERR_BUF        -2  */
+  "buffer error.",          /* ERR_BUF        -2  */
   "Timeout.",               /* ERR_TIMEOUT    -3  */
   "Routing problem.",       /* ERR_RTE        -4  */
   "Operation in progress.", /* ERR_INPROGRESS -5  */

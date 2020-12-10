@@ -55,7 +55,7 @@ typedef enum {
   ERR_OK         = 0,
 /** Out of memory error.     */
   ERR_MEM        = -1,
-/** Buffer error.            */
+/** buffer error.            */
   ERR_BUF        = -2,
 /** Timeout.                 */
   ERR_TIMEOUT    = -3,

@@ -210,7 +210,7 @@ static void ppp_notify_phase_cb(ppp_pcb *pcb, u8_t phase, void *ctx)
 			m_ppp_connected = true;
 			break;
         
-        case  PPP_PHASE_TERMINATE:
+        case PPP_PHASE_TERMINATE:
             DebugPrint("PPP_PHASE_TERMINATE\r\n");
             break;
         
@@ -253,8 +253,10 @@ void gsm_state_polling_task(void)
         last_tick = gsm_hw_get_config()->sys_now();
     }
     else
+    {
         return;
-    
+    }
+
 	switch (m_gsm_manager.state)
 	{
 		case GSM_STATE_PWR_ON:
@@ -379,12 +381,12 @@ static void gsm_power_on(gsm_response_evt_t event, void *response_buffer)
 
 		case 7:
 		{
-			memset(gsm_ctx()->Parameters.SIM_IMEI, 0, sizeof(gsm_ctx()->Parameters.SIM_IMEI));
-			gsm_utilities_get_IMEI(response_buffer, (uint8_t*)gsm_ctx()->Parameters.SIM_IMEI);
-	//		DebugPrint("Get SIM IMEI: %s\r\n", gsm_ctx()->Parameters.SIM_IMEI);
-			if (strlen(gsm_ctx()->Parameters.SIM_IMEI) < 15)
+			memset(gsm_ctx()->parameters.sim_imei, 0, sizeof(gsm_ctx()->parameters.sim_imei));
+			gsm_utilities_get_imei(response_buffer, (uint8_t*)gsm_ctx()->parameters.sim_imei);
+	//		DebugPrint("Get SIM IMEI: %s\r\n", gsm_ctx()->parameters.sim_imei);
+			if (strlen(gsm_ctx()->parameters.sim_imei) < 15)
 			{
-				DebugPrint("GSM: invalid SIM IMEI %s\r\n", gsm_ctx()->Parameters.SIM_IMEI);
+				DebugPrint("GSM: invalid SIM IMEI %s\r\n", gsm_ctx()->parameters.sim_imei);
 				change_gsm_state(GSM_STATE_RESET);
 				return;
 			}
@@ -394,10 +396,10 @@ static void gsm_power_on(gsm_response_evt_t event, void *response_buffer)
 
 		case 8:
 		{
-			memset(gsm_ctx()->Parameters.GSM_IMEI, 0, sizeof(gsm_ctx()->Parameters.GSM_IMEI));
-			gsm_utilities_get_IMEI(response_buffer, (uint8_t*)gsm_ctx()->Parameters.GSM_IMEI);
-			DebugPrint("Get GSM IMEI: %s\r\n", gsm_ctx()->Parameters.GSM_IMEI);
-			if (strlen(gsm_ctx()->Parameters.GSM_IMEI) < 15)
+			memset(gsm_ctx()->parameters.gsm_imei, 0, sizeof(gsm_ctx()->parameters.gsm_imei));
+			gsm_utilities_get_imei(response_buffer, (uint8_t*)gsm_ctx()->parameters.gsm_imei);
+			DebugPrint("Get GSM IMEI: %s\r\n", gsm_ctx()->parameters.gsm_imei);
+			if (strlen(gsm_ctx()->parameters.gsm_imei) < 15)
 			{
 				DebugPrint("GSM: Invalid GSM IMEI\r\n");
 				change_gsm_state(GSM_STATE_RESET);
@@ -444,19 +446,19 @@ static void gsm_power_on(gsm_response_evt_t event, void *response_buffer)
 				return;
 			}
 
-			if (gsm_utilities_get_signal_strength_from_buffer(response_buffer, &gsm_ctx()->gl_status.GSMCSQ) == false)
+			if (gsm_utilities_get_signal_strength_from_buffer(response_buffer, &gsm_ctx()->gl_status.gsm_csq) == false)
 			{
-				gsm_ctx()->gl_status.GSMCSQ = GSM_CSQ_INVALID;
+				gsm_ctx()->gl_status.gsm_csq = GSM_CSQ_INVALID;
 			}
 
-			if (gsm_ctx()->gl_status.GSMCSQ == GSM_CSQ_INVALID || gsm_ctx()->gl_status.GSMCSQ == 0)
+			if (gsm_ctx()->gl_status.gsm_csq == GSM_CSQ_INVALID || gsm_ctx()->gl_status.gsm_csq == 0)
 			{
 				gsm_hw_send_at_cmd(AT_CSQ, AT_OK, 1000, 3, gsm_power_on);
 				m_gsm_manager.step = 12;
 			}
 			else
 			{
-				DebugPrint("Valid CSQ: %d\r\n", gsm_ctx()->gl_status.GSMCSQ);
+				DebugPrint("Valid CSQ: %d\r\n", gsm_ctx()->gl_status.gsm_csq);
 				m_gsm_manager.step = 0;
 				gsm_manager_ctx()->ready = 1;
 				gsm_hw_send_at_cmd(ATV1, AT_OK, 1000, 5, open_ppp_stack);

@@ -163,7 +163,7 @@ void do_ota_update(void)
 
     while(1)
     {
-        gsm_hw_polling();
+        gsm_hw_polling_task();
 
         gsm_state_polling_task();
     
@@ -232,7 +232,7 @@ void do_ota_update(void)
         }
 
         gsm_hw_lwip_polling_task();
-        update_fw_http_polling();
+        update_fw_http_polling_task();
     }
 }
 

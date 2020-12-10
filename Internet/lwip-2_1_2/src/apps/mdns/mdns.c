@@ -2292,7 +2292,7 @@ mdns_resp_rename_service(struct netif *netif, s8_t slot, const char *name)
 /**
  * @ingroup mdns
  * Call this function from inside the service_get_txt_fn_t callback to add text data.
- * Buffer for TXT data is 256 bytes, and each field is prefixed with a length byte.
+ * buffer for TXT data is 256 bytes, and each field is prefixed with a length byte.
  * @param service The service provided to the get_txt callback
  * @param txt String to add to the TXT field.
  * @param txt_len Length of string

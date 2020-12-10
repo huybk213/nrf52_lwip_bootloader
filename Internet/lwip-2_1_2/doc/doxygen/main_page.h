@@ -201,7 +201,7 @@
  * -----------------------------------------------------
  * Nice description about DMA capable hardware and buffer handling:
  * http://www.pebblebay.com/a-guide-to-using-direct-memory-access-in-embedded-systems-part-two/
- * Read especially sections "Cache coherency" and "Buffer alignment".
+ * Read especially sections "Cache coherency" and "buffer alignment".
  */
 
 /**

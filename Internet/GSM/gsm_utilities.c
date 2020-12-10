@@ -16,7 +16,7 @@
 #include "gsm_context.h"
 #include "gsm_utilities.h"
 
-void gsm_utilities_get_IMEI(uint8_t *imei_buffer, uint8_t * result)
+void gsm_utilities_get_imei(uint8_t *imei_buffer, uint8_t * result)
 {
     uint8_t count = 0;
     uint8_t tmp_count = 0;

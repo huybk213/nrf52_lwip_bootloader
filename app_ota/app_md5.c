@@ -127,7 +127,7 @@ void app_md5_update(app_md5_ctx * context, uint8_t *input, uint32_t inputLen)
 	else
 		i = 0;
 	
-	// Buffer remaining input
+	// buffer remaining input
 	memcpy(&context->buffer[index], &input[i], inputLen - i);
 }
 

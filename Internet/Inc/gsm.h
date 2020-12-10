@@ -152,7 +152,7 @@ typedef void (*gsm_send_AT_cb_t) (gsm_response_evt_t event, void *response_buffe
  * @brief GSM hardware polling task
  * @note Shoud polling every 100ms
  */
-void gsm_hw_polling(void) ;
+void gsm_hw_polling_task(void) ;
 
 /**
  * @brief Get PPP connection status
@@ -197,7 +197,7 @@ void gsm_hw_lwip_polling_task(void);
  * @brief Get gsm hardware configuration function
  * @return Pointer to gsm configuration
  */
-gsm_hw_config_t * gsm_hw_get_config(void);
+gsm_hw_config_t *gsm_hw_get_config(void);
 
 /**
  * @brief Insert data into gsm buffer
@@ -215,7 +215,7 @@ void GSM_HardwareSetTickMs(uint32_t ms);
  * @brief Get gsm manager config
  * @return Pointer to gsm manger
  */
-gsm_manager_t * gsm_manager_ctx(void);
+gsm_manager_t *gsm_manager_ctx(void);
 
 /**
  * @brief Hardware reset module GSM by power key
@@ -233,7 +233,7 @@ void gsm_set_at_mode(gsm_at_mode_t mode);
  * @brief Get PPP control block
  * @retval Pointer to PPP control block
  */
-ppp_pcb * gsm_data_layer_get_ppp_control_block(void);
+ppp_pcb *gsm_data_layer_get_ppp_control_block(void);
 
 #endif // __GSM_H__
 
