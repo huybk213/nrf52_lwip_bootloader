@@ -337,7 +337,7 @@ static void gsm_power_on(gsm_response_evt_t event, void *response_buffer)
 
     case 2:
     {
-        DebugPrint("Setup echo mode off: %s", (event == GSM_EVEN_OK) ? "[OK]" : "[FAIL]");
+        DebugPrint("Setup echo mode off: %s\r\n", (event == GSM_EVEN_OK) ? "[OK]" : "[FAIL]");
         gsm_hw_send_at_cmd(AT_BAUDRATE_115200, AT_OK, 1000, 10, gsm_power_on);
     }
     break;
@@ -514,6 +514,7 @@ static void open_ppp_stack(gsm_response_evt_t event, void *response_buffer)
         }
         else
         {
+            DebugPrint("Open ppp stack failed\r\n");
             // Reset gsm module
             change_gsm_state(GSM_STATE_RESET);
             return;
@@ -556,7 +557,7 @@ static void open_ppp_stack(gsm_response_evt_t event, void *response_buffer)
 
             /* Set this interface as default route */
             ppp_set_default(m_ppp_control_block);
-            ppp_set_auth(m_ppp_control_block, PPPAUTHTYPE_CHAP, "", "");
+            //ppp_set_auth(m_ppp_control_block, PPPAUTHTYPE_CHAP, "", "");
             ppp_set_notify_phase_callback(m_ppp_control_block, ppp_notify_phase_cb);
             ppp_connect(m_ppp_control_block, 0);
         }

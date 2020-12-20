@@ -189,7 +189,7 @@ static void ipv6cp_finished(lwip_fsm *f); /* Don't need lower layer */
 
 static const lwip_fsm_callbacks ipv6cp_callbacks = { /* IPV6CP callback routines */
     ipv6cp_resetci,		/* Reset our Configuration Information */
-    ipv6cp_cilen,		/* Length of our Configuration Information */
+    ipv6cp_cilen,		/* length of our Configuration Information */
     ipv6cp_addci,		/* Add our Configuration Information */
     ipv6cp_ackci,		/* ACK our Configuration Information */
     ipv6cp_nakci,		/* NAK our Configuration Information */
@@ -881,7 +881,7 @@ bad:
  * CONFNAK; returns CONFREJ if it can't return CONFACK.
  *
  * inp = Requested CIs
- * len = Length of requested CIs
+ * len = length of requested CIs
  *
  */
 static int ipv6cp_reqci(lwip_fsm *f, u_char *inp, int *len, int reject_if_disagree) {
@@ -900,7 +900,7 @@ static int ipv6cp_reqci(lwip_fsm *f, u_char *inp, int *len, int reject_if_disagr
     int orc;			/* Individual option return code */
     u_char *p;			/* Pointer to next char to parse */
     u_char *ucp = inp;		/* Pointer to current output char */
-    int l = *len;		/* Length left */
+    int l = *len;		/* length left */
 
     /*
      * Reset all his options.

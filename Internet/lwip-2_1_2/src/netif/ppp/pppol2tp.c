@@ -832,7 +832,7 @@ static err_t pppol2tp_send_sccrq(pppol2tp_pcb *l2tp) {
   /* fill in pkt */
   /* L2TP control header */
   PUTSHORT(PPPOL2TP_HEADERFLAG_CONTROL_MANDATORY, p);
-  PUTSHORT(len, p); /* Length */
+  PUTSHORT(len, p); /* length */
   PUTSHORT(0, p); /* Tunnel Id */
   PUTSHORT(0, p); /* Session Id */
   PUTSHORT(0, p); /* NS Sequence number - to peer */
@@ -927,7 +927,7 @@ static err_t pppol2tp_send_scccn(pppol2tp_pcb *l2tp, u16_t ns) {
   /* fill in pkt */
   /* L2TP control header */
   PUTSHORT(PPPOL2TP_HEADERFLAG_CONTROL_MANDATORY, p);
-  PUTSHORT(len, p); /* Length */
+  PUTSHORT(len, p); /* length */
   PUTSHORT(l2tp->source_tunnel_id, p); /* Tunnel Id */
   PUTSHORT(0, p); /* Session Id */
   PUTSHORT(ns, p); /* NS Sequence number - to peer */
@@ -974,7 +974,7 @@ static err_t pppol2tp_send_icrq(pppol2tp_pcb *l2tp, u16_t ns) {
   /* fill in pkt */
   /* L2TP control header */
   PUTSHORT(PPPOL2TP_HEADERFLAG_CONTROL_MANDATORY, p);
-  PUTSHORT(len, p); /* Length */
+  PUTSHORT(len, p); /* length */
   PUTSHORT(l2tp->source_tunnel_id, p); /* Tunnel Id */
   PUTSHORT(0, p); /* Session Id */
   PUTSHORT(ns, p); /* NS Sequence number - to peer */
@@ -1022,7 +1022,7 @@ static err_t pppol2tp_send_iccn(pppol2tp_pcb *l2tp, u16_t ns) {
   /* fill in pkt */
   /* L2TP control header */
   PUTSHORT(PPPOL2TP_HEADERFLAG_CONTROL_MANDATORY, p);
-  PUTSHORT(len, p); /* Length */
+  PUTSHORT(len, p); /* length */
   PUTSHORT(l2tp->source_tunnel_id, p); /* Tunnel Id */
   PUTSHORT(l2tp->source_session_id, p); /* Session Id */
   PUTSHORT(ns, p); /* NS Sequence number - to peer */
@@ -1069,7 +1069,7 @@ static err_t pppol2tp_send_zlb(pppol2tp_pcb *l2tp, u16_t ns, u16_t nr) {
   /* fill in pkt */
   /* L2TP control header */
   PUTSHORT(PPPOL2TP_HEADERFLAG_CONTROL_MANDATORY, p);
-  PUTSHORT(len, p); /* Length */
+  PUTSHORT(len, p); /* length */
   PUTSHORT(l2tp->source_tunnel_id, p); /* Tunnel Id */
   PUTSHORT(0, p); /* Session Id */
   PUTSHORT(ns, p); /* NS Sequence number - to peer */
@@ -1098,7 +1098,7 @@ static err_t pppol2tp_send_stopccn(pppol2tp_pcb *l2tp, u16_t ns) {
   /* fill in pkt */
   /* L2TP control header */
   PUTSHORT(PPPOL2TP_HEADERFLAG_CONTROL_MANDATORY, p);
-  PUTSHORT(len, p); /* Length */
+  PUTSHORT(len, p); /* length */
   PUTSHORT(l2tp->source_tunnel_id, p); /* Tunnel Id */
   PUTSHORT(0, p); /* Session Id */
   PUTSHORT(ns, p); /* NS Sequence number - to peer */

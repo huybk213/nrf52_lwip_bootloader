@@ -22,14 +22,14 @@ static const char *const g_psHTTPHeaderStrings[] = {
   "HTTP/1.1 404 File not found\r\n",
   "HTTP/1.1 400 Bad Request\r\n",
   "HTTP/1.1 501 Not Implemented\r\n",
-  "Content-Length: ",
+  "Content-length: ",
   "Connection: Close\r\n",
   "Connection: keep-alive\r\n",
-  "Connection: keep-alive\r\nContent-Length: ",
+  "Connection: keep-alive\r\nContent-length: ",
   "Server: "HTTPD_SERVER_AGENT"\r\n",
   "\r\n<html><body><h2>404: The requested file cannot be found.</h2></body></html>\r\n"
 #if LWIP_HTTPD_SUPPORT_11_KEEPALIVE
-  , "Connection: keep-alive\r\nContent-Length: 77\r\n\r\n<html><body><h2>404: The requested file cannot be found.</h2></body></html>\r\n"
+  , "Connection: keep-alive\r\nContent-length: 77\r\n\r\n<html><body><h2>404: The requested file cannot be found.</h2></body></html>\r\n"
 #endif
 };
 
@@ -42,10 +42,10 @@ static const char *const g_psHTTPHeaderStrings[] = {
 #define HTTP_HDR_NOT_FOUND_11   5 /* 404 File not found */
 #define HTTP_HDR_BAD_REQUEST_11 6 /* 400 Bad request */
 #define HTTP_HDR_NOT_IMPL_11    7 /* 501 Not Implemented */
-#define HTTP_HDR_CONTENT_LENGTH 8 /* Content-Length: (HTTP 1.0)*/
+#define HTTP_HDR_CONTENT_LENGTH 8 /* Content-length: (HTTP 1.0)*/
 #define HTTP_HDR_CONN_CLOSE     9 /* Connection: Close (HTTP 1.1) */
 #define HTTP_HDR_CONN_KEEPALIVE 10 /* Connection: keep-alive (HTTP 1.1) */
-#define HTTP_HDR_KEEPALIVE_LEN  11 /* Connection: keep-alive + Content-Length: (HTTP 1.1)*/
+#define HTTP_HDR_KEEPALIVE_LEN  11 /* Connection: keep-alive + Content-length: (HTTP 1.1)*/
 #define HTTP_HDR_SERVER         12 /* Server: HTTPD_SERVER_AGENT */
 #define DEFAULT_404_HTML        13 /* default 404 body */
 #if LWIP_HTTPD_SUPPORT_11_KEEPALIVE

@@ -91,14 +91,14 @@ typedef struct lwip_fsm {
     u8_t rnakloops;		/* Number of naks received */
     u8_t maxnakloops;		/* Maximum number of nak loops tolerated
 				   (necessary because IPCP require a custom large max nak loops value) */
-    u8_t term_reason_len;	/* Length of term_reason */
+    u8_t term_reason_len;	/* length of term_reason */
 } lwip_fsm;
 
 
 typedef struct lwip_fsm_callbacks {
     void (*resetci)		/* Reset our Configuration Information */
 		(lwip_fsm *);
-    int  (*cilen)		/* Length of our Configuration Information */
+    int  (*cilen)		/* length of our Configuration Information */
 		(lwip_fsm *);
     void (*addci) 		/* Add our Configuration Information */
 		(lwip_fsm *, u_char *, int *);

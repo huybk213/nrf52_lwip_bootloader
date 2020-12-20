@@ -267,7 +267,7 @@ struct smtp_session {
   char *pass;
   /** Username and password combined as necessary for PLAIN authentication */
   char auth_plain[SMTP_MAX_USERNAME_LEN + SMTP_MAX_PASS_LEN + 3];
-  /** Length of smtp_auth_plain string (cannot use strlen since it includes \0) */
+  /** length of smtp_auth_plain string (cannot use strlen since it includes \0) */
   size_t auth_plain_len;
 #endif /* SMTP_COPY_AUTHDATA */
 #if SMTP_BODYDH
@@ -289,7 +289,7 @@ static char *smtp_username;
 static char *smtp_pass;
 /** Username and password combined as necessary for PLAIN authentication */
 static char smtp_auth_plain[SMTP_MAX_USERNAME_LEN + SMTP_MAX_PASS_LEN + 3];
-/** Length of smtp_auth_plain string (cannot use strlen since it includes \0) */
+/** length of smtp_auth_plain string (cannot use strlen since it includes \0) */
 static size_t smtp_auth_plain_len;
 
 #if SMTP_CHECK_DATA

@@ -82,8 +82,8 @@
 enum {
   TCP_DISCONNECTED,
   TCP_CONNECTING,
-  MQTT_CONNECTING,
-  MQTT_CONNECTED
+  MQTT_USER_STATE_CONNECTING,
+  MQTT_USER_STATE_CONNECTED
 };
 
 /**
@@ -569,7 +569,7 @@ mqtt_close(mqtt_client_t *client, mqtt_connection_status_t reason)
 
 
 /**
- * Interval timer, called every MQTT_CYCLIC_TIMER_INTERVAL seconds in MQTT_CONNECTING and MQTT_CONNECTED states
+ * Interval timer, called every MQTT_CYCLIC_TIMER_INTERVAL seconds in MQTT_USER_STATE_CONNECTING and MQTT_USER_STATE_CONNECTED states
  * @param arg MQTT client
  */
 static void
@@ -579,7 +579,7 @@ mqtt_cyclic_timer(void *arg)
   mqtt_client_t *client = (mqtt_client_t *)arg;
   LWIP_ASSERT("mqtt_cyclic_timer: client != NULL", client != NULL);
 
-  if (client->conn_state == MQTT_CONNECTING) {
+  if (client->conn_state == MQTT_USER_STATE_CONNECTING) {
     client->cyclic_tick++;
     if ((client->cyclic_tick * MQTT_CYCLIC_TIMER_INTERVAL) >= MQTT_CONNECT_TIMOUT) {
       LWIP_DEBUGF(MQTT_DEBUG_TRACE, ("mqtt_cyclic_timer: CONNECT attempt to server timed out\n"));
@@ -587,7 +587,7 @@ mqtt_cyclic_timer(void *arg)
       mqtt_close(client, MQTT_CONNECT_TIMEOUT);
       restart_timer = 0;
     }
-  } else if (client->conn_state == MQTT_CONNECTED) {
+  } else if (client->conn_state == MQTT_USER_STATE_CONNECTED) {
     /* Handle timeout for pending requests */
     mqtt_request_time_elapsed(&client->pend_req_queue, MQTT_CYCLIC_TIMER_INTERVAL);
 
@@ -686,7 +686,7 @@ mqtt_message_received(mqtt_client_t *client, u8_t fixed_hdr_idx, u16_t length, u
              return MQTT_CONNECT_DISCONNECTED);
 
   if (pkt_type == MQTT_MSG_TYPE_CONNACK) {
-    if (client->conn_state == MQTT_CONNECTING) {
+    if (client->conn_state == MQTT_USER_STATE_CONNECTING) {
       if (length < 2) {
         LWIP_DEBUGF(MQTT_DEBUG_WARN,( "mqtt_message_received: Received short CONNACK message\n"));
         goto out_disconnect;
@@ -697,7 +697,7 @@ mqtt_message_received(mqtt_client_t *client, u8_t fixed_hdr_idx, u16_t length, u
       if (res == MQTT_CONNECT_ACCEPTED) {
         /* Reset cyclic_tick when changing to connected state */
         client->cyclic_tick = 0;
-        client->conn_state = MQTT_CONNECTED;
+        client->conn_state = MQTT_USER_STATE_CONNECTED;
         /* Notify upper layer */
         if (client->connect_cb != 0) {
           client->connect_cb(client, client->connect_arg, res);
@@ -980,7 +980,7 @@ mqtt_tcp_sent_cb(void *arg, struct altcp_pcb *tpcb, u16_t len)
   LWIP_UNUSED_ARG(tpcb);
   LWIP_UNUSED_ARG(len);
 
-  if (client->conn_state == MQTT_CONNECTED) {
+  if (client->conn_state == MQTT_USER_STATE_CONNECTED) {
     struct mqtt_request_t *r;
 
     /* Reset keep-alive send timer and server watchdog */
@@ -1027,7 +1027,7 @@ static err_t
 mqtt_tcp_poll_cb(void *arg, struct altcp_pcb *tpcb)
 {
   mqtt_client_t *client = (mqtt_client_t *)arg;
-  if (client->conn_state == MQTT_CONNECTED) {
+  if (client->conn_state == MQTT_USER_STATE_CONNECTED) {
     /* Try send any remaining buffers from output queue */
     mqtt_output_send(&client->output, tpcb);
   }
@@ -1060,7 +1060,7 @@ mqtt_tcp_connect_cb(void *arg, struct altcp_pcb *tpcb, err_t err)
 
   LWIP_DEBUGF(MQTT_DEBUG_TRACE, ("mqtt_tcp_connect_cb: TCP connection established to server\n"));
   /* Enter MQTT connect state */
-  client->conn_state = MQTT_CONNECTING;
+  client->conn_state = MQTT_USER_STATE_CONNECTING;
 
   /* Start cyclic timer */
   sys_timeout(MQTT_CYCLIC_TIMER_INTERVAL * 1000, mqtt_cyclic_timer, client);
@@ -1084,7 +1084,7 @@ mqtt_tcp_connect_cb(void *arg, struct altcp_pcb *tpcb, err_t err)
  * @param client MQTT client
  * @param topic Publish topic string
  * @param payload Data to publish (NULL is allowed)
- * @param payload_length Length of payload (0 is allowed)
+ * @param payload_length length of payload (0 is allowed)
  * @param qos Quality of service, 0 1 or 2
  * @param retain MQTT retain flag
  * @param cb Callback to call when publish is complete or has timed out
@@ -1286,7 +1286,7 @@ mqtt_client_connect(mqtt_client_t *client, const ip_addr_t *ip_addr, u16_t port,
   err_t err;
   size_t len;
   u16_t client_id_length;
-  /* Length is the sum of 2+"MQTT", protocol level, flags and keep alive */
+  /* length is the sum of 2+"MQTT", protocol level, flags and keep alive */
   u16_t remaining_length = 2 + 4 + 1 + 1 + 2;
   u8_t flags = 0, will_topic_len = 0, will_msg_len = 0;
   u16_t client_user_len = 0, client_pass_len = 0;
@@ -1457,7 +1457,7 @@ mqtt_client_is_connected(mqtt_client_t *client)
 {
   LWIP_ASSERT_CORE_LOCKED();
   LWIP_ASSERT("mqtt_client_is_connected: client != NULL", client);
-  return client->conn_state == MQTT_CONNECTED;
+  return client->conn_state == MQTT_USER_STATE_CONNECTED;
 }
 
 #endif /* LWIP_TCP && LWIP_CALLBACK_API */

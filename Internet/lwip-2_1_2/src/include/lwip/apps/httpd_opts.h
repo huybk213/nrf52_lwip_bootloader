@@ -90,7 +90,7 @@
  *
  * A downside of the current SSI implementation is that persistent connections
  * don't work, as the file length is not known in advance (and httpd currently
- * relies on the Content-Length header for persistent connections).
+ * relies on the Content-length header for persistent connections).
  *
  * To save memory, the maximum tag length is limited (@see LWIP_HTTPD_MAX_TAG_NAME_LEN).
  * To save memory, the maximum insertion string length is limited (@see

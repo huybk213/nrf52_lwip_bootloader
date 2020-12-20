@@ -59,7 +59,7 @@ extern "C" {
 #define PPPOL2TP_HEADERFLAG_PRIORITY     0x0100
 #define PPPOL2TP_HEADERFLAG_VERSION      0x0002
 
-/* Mandatory bits for control: Control, Length, Sequence, Version 2 */
+/* Mandatory bits for control: Control, length, Sequence, Version 2 */
 #define PPPOL2TP_HEADERFLAG_CONTROL_MANDATORY     (PPPOL2TP_HEADERFLAG_CONTROL|PPPOL2TP_HEADERFLAG_LENGTH|PPPOL2TP_HEADERFLAG_SEQUENCE|PPPOL2TP_HEADERFLAG_VERSION)
 /* Forbidden bits for control: Offset, Priority */
 #define PPPOL2TP_HEADERFLAG_CONTROL_FORBIDDEN     (PPPOL2TP_HEADERFLAG_OFFSET|PPPOL2TP_HEADERFLAG_PRIORITY)

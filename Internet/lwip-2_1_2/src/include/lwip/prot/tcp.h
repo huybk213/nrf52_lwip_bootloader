@@ -43,7 +43,7 @@
 extern "C" {
 #endif
 
-/* Length of the TCP header, excluding options. */
+/* length of the TCP header, excluding options. */
 #define TCP_HLEN 20
 
 /* Fields are (of course) in network byte order.

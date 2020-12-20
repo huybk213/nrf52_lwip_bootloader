@@ -196,7 +196,7 @@ void http_set_ssi_handler(tSSIHandler pfnSSIHandler,
  * @param uri The HTTP header URI receiving the POST request.
  * @param http_request The raw HTTP request (the first packet, normally).
  * @param http_request_len Size of 'http_request'.
- * @param content_len Content-Length from HTTP header.
+ * @param content_len Content-length from HTTP header.
  * @param response_uri Filename of response file, to be filled when denying the
  *        request
  * @param response_uri_len Size of the 'response_uri' buffer.

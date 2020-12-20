@@ -123,7 +123,7 @@ static void ipcp_finished(lwip_fsm *f);	/* Don't need lower layer */
 
 static const lwip_fsm_callbacks ipcp_callbacks = { /* IPCP callback routines */
     ipcp_resetci,		/* Reset our Configuration Information */
-    ipcp_cilen,			/* Length of our Configuration Information */
+    ipcp_cilen,			/* length of our Configuration Information */
     ipcp_addci,			/* Add our Configuration Information */
     ipcp_ackci,			/* ACK our Configuration Information */
     ipcp_nakci,			/* NAK our Configuration Information */
@@ -1501,7 +1501,7 @@ bad:
  * CONFNAK; returns CONFREJ if it can't return CONFACK.
  *
  * inp = Requested CIs
- * len = Length of requested CIs
+ * len = length of requested CIs
  */
 static int ipcp_reqci(lwip_fsm *f, u_char *inp, int *len, int reject_if_disagree) {
     ppp_pcb *pcb = f->pcb;
@@ -1518,7 +1518,7 @@ static int ipcp_reqci(lwip_fsm *f, u_char *inp, int *len, int reject_if_disagree
     int orc;			/* Individual option return code */
     u_char *p;			/* Pointer to next char to parse */
     u_char *ucp = inp;		/* Pointer to current output char */
-    int l = *len;		/* Length left */
+    int l = *len;		/* length left */
 #if VJ_SUPPORT
     u_char maxslotindex, cflag;
 #endif /* VJ_SUPPORT */

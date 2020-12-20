@@ -142,7 +142,7 @@ enum {
  * @param arg Additional argument to pass to the callback function
  * @param data User data, pointed object, data may not be referenced after callback return,
           NULL is passed when all publish data are delivered
- * @param len Length of publish data fragment
+ * @param len length of publish data fragment
  * @param flags MQTT_DATA_FLAG_LAST set when this call contains the last part of data from publish message
  *
  */

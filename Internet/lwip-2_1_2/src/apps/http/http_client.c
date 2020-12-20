@@ -255,7 +255,7 @@ http_wait_headers(struct pbuf *p, u32_t *content_length, u16_t *total_header_len
     *content_length = HTTPC_CONTENT_LEN_INVALID;
     *total_header_len = end1 + 4;
 
-    content_len_hdr = pbuf_memfind(p, "Content-Length: ", 16, 0);
+    content_len_hdr = pbuf_memfind(p, "Content-length: ", 16, 0);
     if (content_len_hdr != 0xFFFF) {
       u16_t content_len_line_end = pbuf_memfind(p, "\r\n", 2, content_len_hdr);
       if (content_len_line_end != 0xFFFF) {

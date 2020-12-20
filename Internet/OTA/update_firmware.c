@@ -17,30 +17,31 @@ static httpc_state_t *m_http_connection_state;
 
 static bool update_fw_verify_checksum(uint32_t begin_addr, uint32_t size)
 {
-    DebugPrint("Caculate md5 from addr 0x%08X, size %d\r\n", begin_addr, size - MD5_LEN);
-    md5_context md5_ctx;
-    uint8_t md5_buffer[MD5_LEN];
+    //DebugPrint("Caculate md5 from addr 0x%08X, size %d\r\n", begin_addr, size - MD5_LEN);
+    //md5_context md5_ctx;
+    //uint8_t md5_buffer[MD5_LEN];
 
-    md5_starts(&md5_ctx);
-    md5_update(&md5_ctx, (uint8_t *)begin_addr, size - MD5_LEN);
-    md5_finish(&md5_ctx, md5_buffer);
+    //md5_starts(&md5_ctx);
+    //md5_update(&md5_ctx, (uint8_t *)begin_addr, size - MD5_LEN);
+    //md5_finish(&md5_ctx, md5_buffer);
 
-    uint32_t checksum_addr = begin_addr + size - MD5_LEN;
-    uint8_t *md5_test = (uint8_t *)checksum_addr;
-    if (memcmp(md5_buffer, (uint8_t *)checksum_addr, MD5_LEN) == 0)
-    {
-        DebugPrint("Valid md5\r\n");
-        return true;
-    }
-    else
-    {
-        DebugPrint("Calculated %02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X, expected %02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X\r\n",
-                   md5_buffer[0], md5_buffer[1], md5_buffer[2], md5_buffer[3], md5_buffer[4], md5_buffer[5], md5_buffer[6], md5_buffer[7],
-                   md5_buffer[8], md5_buffer[9], md5_buffer[10], md5_buffer[11], md5_buffer[12], md5_buffer[13], md5_buffer[14], md5_buffer[15],
-                   md5_test, md5_test[1], md5_test[2], md5_test[3], md5_test[4], md5_test[5], md5_test[6], md5_test[7],
-                   md5_test[8], md5_test[9], md5_test[10], md5_test[11], md5_test[12], md5_test[13], md5_test[14], md5_test[15]);
-        return false;
-    }
+    //uint32_t checksum_addr = begin_addr + size - MD5_LEN;
+    //uint8_t *md5_test = (uint8_t *)checksum_addr;
+    //if (memcmp(md5_buffer, (uint8_t *)checksum_addr, MD5_LEN) == 0)
+    //{
+    //    DebugPrint("Valid md5\r\n");
+    //    return true;
+    //}
+    //else
+    //{
+    //    DebugPrint("Calculated %02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X, expected %02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X\r\n",
+    //               md5_buffer[0], md5_buffer[1], md5_buffer[2], md5_buffer[3], md5_buffer[4], md5_buffer[5], md5_buffer[6], md5_buffer[7],
+    //               md5_buffer[8], md5_buffer[9], md5_buffer[10], md5_buffer[11], md5_buffer[12], md5_buffer[13], md5_buffer[14], md5_buffer[15],
+    //               md5_test, md5_test[1], md5_test[2], md5_test[3], md5_test[4], md5_test[5], md5_test[6], md5_test[7],
+    //               md5_test[8], md5_test[9], md5_test[10], md5_test[11], md5_test[12], md5_test[13], md5_test[14], md5_test[15]);
+    //    return false;
+    //}
+    return false;
 }
 
 /** Handle data connection incoming data
@@ -148,7 +149,7 @@ static void httpc_result_callback(void *arg, httpc_result_t httpc_result, u32_t 
     DebugPrint("result: %d, content len: %d, status code: %d\r\n", httpc_result, rx_content_len, srv_res);
     if (rx_content_len == 0)
     {
-        app_bootloader_ota_finish("Length");
+        app_bootloader_ota_finish("length");
         DebugFlush();
         NVIC_SystemReset();
     }
@@ -192,7 +193,7 @@ static void httpc_result_callback(void *arg, httpc_result_t httpc_result, u32_t 
                                        //break;
     case HTTPC_RESULT_ERR_CONTENT_LEN: /** Content length mismatch */
         app_bootloader_update_ota_address();
-        app_bootloader_ota_finish("Length");
+        app_bootloader_ota_finish("length");
         DebugPrint("Error content length\r\n");
         DebugFlush();
         NVIC_SystemReset();

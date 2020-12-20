@@ -187,14 +187,14 @@ static char http_uri_buf[LWIP_HTTPD_URI_BUF_LEN + 1];
 #define NUM_FILE_HDR_STRINGS 5
 #define HDR_STRINGS_IDX_HTTP_STATUS           0 /* e.g. "HTTP/1.0 200 OK\r\n" */
 #define HDR_STRINGS_IDX_SERVER_NAME           1 /* e.g. "Server: "HTTPD_SERVER_AGENT"\r\n" */
-#define HDR_STRINGS_IDX_CONTENT_LEN_KEEPALIVE 2 /* e.g. "Content-Length: xy\r\n" and/or "Connection: keep-alive\r\n" */
+#define HDR_STRINGS_IDX_CONTENT_LEN_KEEPALIVE 2 /* e.g. "Content-length: xy\r\n" and/or "Connection: keep-alive\r\n" */
 #define HDR_STRINGS_IDX_CONTENT_LEN_NR        3 /* the byte count, when content-length is used */
 #define HDR_STRINGS_IDX_CONTENT_TYPE          4 /* the content type (or default answer content type including default document) */
 
-/* The dynamically generated Content-Length buffer needs space for CRLF + NULL */
+/* The dynamically generated Content-length buffer needs space for CRLF + NULL */
 #define LWIP_HTTPD_MAX_CONTENT_LEN_OFFSET 3
 #ifndef LWIP_HTTPD_MAX_CONTENT_LEN_SIZE
-/* The dynamically generated Content-Length buffer shall be able to work with
+/* The dynamically generated Content-length buffer shall be able to work with
    ~953 MB (9 digits) */
 #define LWIP_HTTPD_MAX_CONTENT_LEN_SIZE   (9 + LWIP_HTTPD_MAX_CONTENT_LEN_OFFSET)
 #endif
@@ -220,12 +220,12 @@ struct http_ssi_state {
   const char *tag_end;    /* Pointer to char after the closing '>' of the tag. */
   u32_t parse_left; /* Number of unparsed bytes in buf. */
   u16_t tag_index;   /* Counter used by tag parsing state machine */
-  u16_t tag_insert_len; /* Length of insert in string tag_insert */
+  u16_t tag_insert_len; /* length of insert in string tag_insert */
 #if LWIP_HTTPD_SSI_MULTIPART
   u16_t tag_part; /* Counter passed to and changed by tag insertion function to insert multiple times */
 #endif /* LWIP_HTTPD_SSI_MULTIPART */
   u8_t tag_type; /* index into http_ssi_tag_desc array */
-  u8_t tag_name_len; /* Length of the tag name in string tag_name */
+  u8_t tag_name_len; /* length of the tag name in string tag_name */
   char tag_name[LWIP_HTTPD_MAX_TAG_NAME_LEN + 1]; /* Last tag name extracted */
   char tag_insert[LWIP_HTTPD_MAX_TAG_INSERT_LEN + 1]; /* Insert string for tag_name */
   enum tag_check_state tag_state; /* State of the tag processor */
@@ -524,7 +524,7 @@ http_state_free(struct http_state *hs)
  *
  * @param pcb altcp_pcb to send
  * @param ptr Data to send
- * @param length Length of data to send (in/out: on return, contains the
+ * @param length length of data to send (in/out: on return, contains the
  *        amount of data sent)
  * @param apiflags directly passed to tcp_write
  * @return the return value of tcp_write
@@ -1731,7 +1731,7 @@ http_post_rxpbuf(struct http_state *hs, struct pbuf *p)
   err_t err;
 
   if (p != NULL) {
-    /* adjust remaining Content-Length */
+    /* adjust remaining Content-length */
     if (hs->post_content_len_left < p->tot_len) {
       hs->post_content_len_left = 0;
     } else {
@@ -1790,8 +1790,8 @@ http_post_request(struct pbuf *inp, struct http_state *hs,
   char *crlfcrlf = lwip_strnstr(uri_end + 1, CRLF CRLF, data_len - (uri_end + 1 - data));
 
   if (crlfcrlf != NULL) {
-    /* search for "Content-Length: " */
-#define HTTP_HDR_CONTENT_LEN                "Content-Length: "
+    /* search for "Content-length: " */
+#define HTTP_HDR_CONTENT_LEN                "Content-length: "
 #define HTTP_HDR_CONTENT_LEN_LEN            16
 #define HTTP_HDR_CONTENT_LEN_DIGIT_MAX_LEN  10
     char *scontent_len = lwip_strnstr(uri_end + 1, HTTP_HDR_CONTENT_LEN, crlfcrlf - (uri_end + 1));
@@ -1825,7 +1825,7 @@ http_post_request(struct pbuf *inp, struct http_state *hs,
 #if LWIP_HTTPD_POST_MANUAL_WND
             hs->no_auto_wnd = !post_auto_wnd;
 #endif /* LWIP_HTTPD_POST_MANUAL_WND */
-            /* set the Content-Length to be received for this POST */
+            /* set the Content-length to be received for this POST */
             hs->post_content_len_left = (u32_t)content_len;
 
             /* get to the pbuf where the body starts */
@@ -1855,16 +1855,16 @@ http_post_request(struct pbuf *inp, struct http_state *hs,
             return http_find_file(hs, http_uri_buf, 0);
           }
         } else {
-          LWIP_DEBUGF(HTTPD_DEBUG, ("POST received invalid Content-Length: %s\n",
+          LWIP_DEBUGF(HTTPD_DEBUG, ("POST received invalid Content-length: %s\n",
                                     content_len_num));
           return ERR_ARG;
         }
       }
     }
-    /* If we come here, headers are fully received (double-crlf), but Content-Length
+    /* If we come here, headers are fully received (double-crlf), but Content-length
        was not included. Since this is currently the only supported method, we have
        to fail in this case! */
-    LWIP_DEBUGF(HTTPD_DEBUG, ("Error when parsing Content-Length\n"));
+    LWIP_DEBUGF(HTTPD_DEBUG, ("Error when parsing Content-length\n"));
     return ERR_ARG;
   }
   /* if we come here, the POST is incomplete */
@@ -1884,7 +1884,7 @@ http_post_request(struct pbuf *inp, struct http_state *hs,
  *
  * @param connection A connection handle passed to httpd_post_begin for which
  *        httpd_post_finished has *NOT* been called yet!
- * @param recved_len Length of data received (for window update)
+ * @param recved_len length of data received (for window update)
  */
 void httpd_post_data_recved(void *connection, u16_t recved_len)
 {

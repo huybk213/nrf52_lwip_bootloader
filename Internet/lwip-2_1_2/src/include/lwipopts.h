@@ -38,7 +38,7 @@
 #define SYS_LIGHTWEIGHT_PROT            0
 #define LWIP_NETCONN                    !NO_SYS
 #define LWIP_SOCKET                     !NO_SYS
-#define LWIP_STATS                      1
+#define LWIP_STATS                      0
 
 #define LWIP_SKIP_PACKING_CHECK
 
@@ -46,13 +46,13 @@
 #define PPP_SUPPORT                     1
 #define PPPOS_SUPPORT	1
 //#define PAP_SUPPORT	1
-#define CHAP_SUPPORT	1
+#define CHAP_SUPPORT	0
 //#define PPP_AUTH_SUPPORT (PAP_SUPPORT || CHAP_SUPPORT || EAP_SUPPORT)
 
 // ======================= FOR DEBUG =====================//
 //#define LWIP_TESTMODE                   1
 
-#define LWIP_DEBUG	LWIP_DBG_OFF		//Tang dung luong hex len khoang 5KB!
+//#define LWIP_DEBUG	LWIP_DBG_OFF		//ON : Tang dung luong hex len khoang 5KB!
 //#define PPP_DEBUG 1
 //#define DNS_DEBUG	LWIP_DBG_ON
 //#define LWIP_PLATFORM_DIAG(x) printf("\r\n"); printf x
@@ -68,6 +68,7 @@
 #define LWIP_UDP 1
 #define LWIP_ICMP 1
 #define LWIP_DNS 1
+
 #define LWIP_RAND() ((u32_t)rand())
 
 #define TCP_TTL	255
@@ -97,6 +98,10 @@
 #define PPP_NOTIFY_PHASE 1
 //#define LINK_STATS 1
 
+#define DNS_TABLE_SIZE        (2) 
+#define DNS_MAX_NAME_LENGTH   (128)
+
+
 // ====================== FOR CHECKSUM =====================//
 //#define LWIP_CHECKSUM_ON_COPY           1
 //#define TCP_CHECKSUM_ON_COPY_SANITY_CHECK 1
@@ -104,10 +109,10 @@
 
 //===================== REDUCE CODE SIZE ===================//
 //using the C runtime memory functions (malloc, free, etc.) => to reduce code size
-#define MEM_LIBC_MALLOC 1		//Giam duoc 1KB code size
+//#define MEM_LIBC_MALLOC 1		//Giam duoc 1KB code size
 
 //to prevent assertion code being included => reduce code
-//#define LWIP_NOASSERT  1		//Giam duoc vai chuc KB code size!
+#define LWIP_NOASSERT  1		//Giam duoc vai chuc KB code size!
 
 
 //#define LWIP_NETCONN_FULLDUPLEX         LWIP_SOCKET
@@ -251,8 +256,5 @@
 //#define LWIP_MEM_ILLEGAL_FREE(msg)      /* to nothing */
 
 #define LWIP_PROVIDE_ERRNO
-#define HTTPC_DEBUG_REQUEST 0
-#define MEM_SIZE            (3200)
-#define HTTPC_CLIENT_AGENT      "huytv"
 
 #endif /* LWIP_HDR_LWIPOPTS_H */

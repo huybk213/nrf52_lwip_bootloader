@@ -132,7 +132,7 @@ static snmp_err_t usmusertable_get_instance(const u32_t *column, const u32_t *ro
   }
 
   if (1 + engineid_len + 1 + name_len != row_oid_len) {
-    /* Length of EngineID and name does not match row oid length. (+2 for length fields)*/
+    /* length of EngineID and name does not match row oid length. (+2 for length fields)*/
     return SNMP_ERR_NOSUCHINSTANCE;
   }
 

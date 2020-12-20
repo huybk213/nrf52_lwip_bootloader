@@ -243,7 +243,7 @@ static void LcpEchoCheck(lwip_fsm *f);
 
 static const lwip_fsm_callbacks lcp_callbacks = {	/* LCP callback routines */
     lcp_resetci,		/* Reset our Configuration Information */
-    lcp_cilen,			/* Length of our Configuration Information */
+    lcp_cilen,			/* length of our Configuration Information */
     lcp_addci,			/* Add our Configuration Information */
     lcp_ackci,			/* ACK our Configuration Information */
     lcp_nakci,			/* NAK our Configuration Information */
@@ -302,7 +302,7 @@ const struct protent lcp_protent = {
 };
 
 /*
- * Length of each type of configuration option (in octets)
+ * length of each type of configuration option (in octets)
  */
 #define CILEN_VOID	2
 #define CILEN_CHAR	3
@@ -1815,7 +1815,7 @@ bad:
  * CONFNAK; returns CONFREJ if it can't return CONFACK.
  *
  * inp = Requested CIs
- * lenp = Length of requested CIs
+ * lenp = length of requested CIs
  */
 static int lcp_reqci(lwip_fsm *f, u_char *inp, int *lenp, int reject_if_disagree) {
     ppp_pcb *pcb = f->pcb;
@@ -1832,7 +1832,7 @@ static int lcp_reqci(lwip_fsm *f, u_char *inp, int *lenp, int reject_if_disagree
     u_char *rejp;		/* Pointer to next char in reject frame */
     struct pbuf *nakp;          /* Nak buffer */
     u_char *nakoutp;		/* Pointer to next char in Nak frame */
-    int l = *lenp;		/* Length left */
+    int l = *lenp;		/* length left */
 
     /*
      * Reset all his options.

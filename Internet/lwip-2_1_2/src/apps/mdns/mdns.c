@@ -278,7 +278,7 @@ struct mdns_answer {
   u16_t cache_flush;
   /* Validity time in seconds */
   u32_t ttl;
-  /** Length of variable answer */
+  /** length of variable answer */
   u16_t rd_length;
   /** Offset of start of variable answer in packet */
   u16_t rd_offset;
@@ -960,7 +960,7 @@ mdns_add_question(struct mdns_outpacket *outpkt, struct mdns_domain *domain, u16
  *                    this reply replaces any earlier answer for this domain/type/class
  * @param ttl Validity time in seconds to send out for IP address data in DNS replies
  * @param buf Pointer to buffer of answer data
- * @param buf_length Length of variable data
+ * @param buf_length length of variable data
  * @param answer_domain A domain to write after any buffer data as answer
  * @return ERR_OK on success, an err_t otherwise
  */
@@ -2295,7 +2295,7 @@ mdns_resp_rename_service(struct netif *netif, s8_t slot, const char *name)
  * buffer for TXT data is 256 bytes, and each field is prefixed with a length byte.
  * @param service The service provided to the get_txt callback
  * @param txt String to add to the TXT field.
- * @param txt_len Length of string
+ * @param txt_len length of string
  * @return ERR_OK if the string was added to the reply, an err_t otherwise
  */
 err_t

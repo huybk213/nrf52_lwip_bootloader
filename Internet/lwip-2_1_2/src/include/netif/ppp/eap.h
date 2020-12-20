@@ -118,8 +118,8 @@ struct eap_auth {
 	char ea_peer[MAXNAMELEN +1];	/* Peer's name */
 	void *ea_session;	/* Authentication library linkage */
 	u_char *ea_skey;	/* Shared encryption key */
-	u_short ea_namelen;	/* Length of our name */
-	u_short ea_peerlen;	/* Length of peer's name */
+	u_short ea_namelen;	/* length of our name */
+	u_short ea_peerlen;	/* length of peer's name */
 	enum eap_state_code ea_state;
 	u_char ea_id;		/* Current id */
 	u_char ea_requests;	/* Number of Requests sent/received */
@@ -141,7 +141,7 @@ typedef struct eap_state {
 	int es_lwrechallenge;		/* SRP lightweight rechallenge inter */
 	u8_t es_usepseudo;		/* Use SRP Pseudonym if offered one */
 	int es_usedpseudo;		/* Set if we already sent PN */
-	int es_challen;			/* Length of challenge string */
+	int es_challen;			/* length of challenge string */
 	u_char es_challenge[EAP_MAX_CHALLENGE_LENGTH];
 } eap_state;
 

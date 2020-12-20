@@ -160,7 +160,7 @@ static void print_usage(void)
   printf("   switch -s: toggle processing of subdirectories (default is on)" NEWLINE);
   printf("   switch -e: exclude HTTP header from file (header is created at runtime, default is off)" NEWLINE);
   printf("   switch -11: include HTTP 1.1 header (1.0 is default)" NEWLINE);
-  printf("   switch -nossi: no support for SSI (cannot calculate Content-Length for SSI)" NEWLINE);
+  printf("   switch -nossi: no support for SSI (cannot calculate Content-length for SSI)" NEWLINE);
   printf("   switch -ssi: ssi filename (ssi support controlled by file list, not by extension)" NEWLINE);
   printf("   switch -c: precalculate checksums for all pages (default is off)" NEWLINE);
   printf("   switch -f: target filename (default is \"fsdata.c\")" NEWLINE);
@@ -1102,7 +1102,7 @@ int file_write_http_header(FILE *data_file, const char *filename, int file_size,
     }
   }
 
-  /* Content-Length is used for persistent connections in HTTP/1.1 but also for
+  /* Content-length is used for persistent connections in HTTP/1.1 but also for
      download progress in older versions
      @todo: just use a big-enough buffer and let the HTTPD send spaces? */
   if (provide_content_len) {
@@ -1170,7 +1170,7 @@ int file_write_http_header(FILE *data_file, const char *filename, int file_size,
     if (provide_content_len) {
       cur_string = g_psHTTPHeaderStrings[HTTP_HDR_CONN_KEEPALIVE];
     } else {
-      /* no Content-Length available, so a persistent connection is no possible
+      /* no Content-length available, so a persistent connection is no possible
          because the client does not know the data length */
       cur_string = g_psHTTPHeaderStrings[HTTP_HDR_CONN_CLOSE];
     }
