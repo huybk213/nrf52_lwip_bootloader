@@ -17,6 +17,7 @@
 #include "lwip/altcp.h"
 #include "lwip/altcp_tls.h"
 #include "lwip/priv/altcp_priv.h"
+#include "aws_certificate.h"
 #endif
 
 #define MQTT_KEEP_ALIVE_INTERVAL_SEC 600
@@ -32,6 +33,168 @@ static uint8_t m_sub_req_error_count;
 
 
 static mqtt_user_state_t m_mqtt_state = MQTT_USER_STATE_DISCONNECTED;
+
+#ifdef MQTT_WITH_SSL
+//TLS
+static mbedtls_entropy_context entropy;
+static mbedtls_ctr_drbg_context ctr_drbg;
+static mbedtls_ssl_context ssl;
+static mbedtls_ssl_config conf;
+static mbedtls_x509_crt x509_root_ca;
+static mbedtls_x509_crt x509_client_key;
+static mbedtls_pk_context pk_private_key;
+static mbedtls_ctr_drbg_context ctr_drbg;
+
+static void mbedtls_alt_debug(void *ctx, int level, const char *file, int line, const char *str) 
+{
+    ((void)level);
+    //{DebugPrint("\r\n%s, at line %d in file %s\n", str, line, file);}
+}
+
+static int mqtt_tls_verify(void *data, mbedtls_x509_crt *crt, int depth, int *flags) 
+{
+	char buf[1024]; 
+
+	DebugPrint("\nVerify requested for (Depth %d):\n", depth ); 
+	mbedtls_x509_crt_info( buf, sizeof( buf ) - 1, "", crt ); 
+//	DebugPrint("%s", buf ); 
+
+	if ( ( (*flags) & MBEDTLS_X509_BADCERT_EXPIRED ) != 0 ) 
+    {
+        DebugPrint("  ! server certificate has expired\n" ); 
+    }
+
+	if ( ( (*flags) & MBEDTLS_X509_BADCERT_REVOKED ) != 0 ) 
+		DebugPrint("  ! server certificate has been revoked\n" ); 
+
+	if ( ( (*flags) &  MBEDTLS_X509_BADCERT_CN_MISMATCH ) != 0 ) 
+		DebugPrint("  ! CN mismatch\n" ); 
+
+	if ( ( (*flags) &  MBEDTLS_X509_BADCERT_NOT_TRUSTED ) != 0 ) 
+		DebugPrint("  ! self-signed or not signed by a trusted CA\n" ); 
+
+	if ( ( (*flags) &  MBEDTLS_X509_BADCRL_NOT_TRUSTED ) != 0 ) 
+		DebugPrint("  ! CRL not trusted\n" ); 
+
+	if ( ( (*flags) &  MBEDTLS_X509_BADCRL_EXPIRED ) != 0 ) 
+		DebugPrint("  ! CRL expired\n" ); 
+
+	if ( ( (*flags) &  MBEDTLS_X509_BADCERT_OTHER ) != 0 ) 
+		DebugPrint("  ! other (unknown) flag\n" ); 
+
+//	if ( ( *flags ) == 0 ) 
+//		DebugPrint("  This certificate has no flags\n" ); 
+
+	return( 0 ); 
+}
+
+void tls_close(void) 
+{ /* called from mqtt.c */
+    /*! \todo This should be in a separate module */
+    mbedtls_ssl_free( &ssl );
+    mbedtls_ssl_config_free( &conf );
+    mbedtls_ctr_drbg_free( &ctr_drbg );
+    mbedtls_entropy_free( &entropy );
+}
+
+static int tls_init(void) 
+{
+    DebugPrint("TLS initialize\r\n");
+
+    /* inspired by https://tls.mbed.org/kb/how-to/mbedtls-tutorial */
+    int ret;
+    const char *pers = "HuyTV-PC123123";
+
+    /* initialize the different descriptors */
+    mbedtls_ssl_init(&ssl);
+    mbedtls_ssl_config_init(&conf);
+    mbedtls_x509_crt_init(&x509_root_ca);
+    mbedtls_x509_crt_init(&x509_client_key);
+    mbedtls_pk_init(&pk_private_key);
+
+    mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_entropy_init(&entropy);
+
+    if( ( ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func, &entropy,
+                               (const unsigned char *) pers,
+                               strlen(pers ) ) ) != 0 )
+    {
+        DebugPrint(" failed\n  ! mbedtls_ctr_drbg_seed returned -0x%08X\n", -ret);
+        return -1;
+    }
+
+    /*
+     * First prepare the SSL configuration by setting the endpoint and transport type, and loading reasonable
+     * defaults for security parameters. The endpoint determines if the SSL/TLS layer will act as a server (MBEDTLS_SSL_IS_SERVER)
+     * or a client (MBEDTLS_SSL_IS_CLIENT). The transport type determines if we are using TLS (MBEDTLS_SSL_TRANSPORT_STREAM)
+     * or DTLS (MBEDTLS_SSL_TRANSPORT_DATAGRAM).
+     */
+    if (( ret = mbedtls_ssl_config_defaults( &conf,
+                    MBEDTLS_SSL_IS_CLIENT,
+                    MBEDTLS_SSL_TRANSPORT_STREAM,
+                    MBEDTLS_SSL_PRESET_DEFAULT ) ) != 0)
+    {
+        DebugPrint(" failed\n  ! mbedtls_ssl_config_defaults returned %d\n\n", ret );
+        return -1;
+    }
+  
+  /* The authentication mode determines how strict the certificates that are presented are checked.  */
+#if 1 // CONFIG_USE_SERVER_VERIFICATION
+    ret = mbedtls_x509_crt_parse(&x509_root_ca, 
+                                (const unsigned char *)aws_certificate_get_root_ca(), 
+                                strlen(aws_certificate_get_root_ca())+1);
+    if (ret != 0)
+    {
+        DebugPrint("Parse root ca error\r\n");
+        return -1;
+    }
+    
+    ret = mbedtls_x509_crt_parse(&x509_client_key, 
+                                (const unsigned char *)aws_certificate_get_client_cert(), 
+                                strlen(aws_certificate_get_client_cert())+1);
+    if (ret != 0)
+    {
+        DebugPrint("Parse client key error\r\n");
+        return -1;
+    }
+
+    ret = mbedtls_pk_parse_key(&pk_private_key, 
+                                (const unsigned char *)aws_certificate_get_client_key(), 
+                                strlen(aws_certificate_get_client_key())+1, NULL, 0);
+    if (ret != 0)
+    {
+        DebugPrint("Parse private key error\r\n");
+        return -1;
+    }
+    
+    DebugPrint("Parse certificate success\r\n");
+    mbedtls_ssl_conf_ca_chain(&conf, &x509_root_ca, NULL);
+    mbedtls_ssl_conf_authmode(&conf, MBEDTLS_SSL_VERIFY_REQUIRED);
+//    mbedtls_ssl_conf_verify(&conf, (int (*)(void *, mbedtls_x509_crt *, int, uint32_t *))mqtt_tls_verify, NULL );
+    
+#else
+    mbedtls_ssl_conf_authmode(&conf, MBEDTLS_SSL_VERIFY_NONE);
+#endif
+    /* The library needs to know which random engine to use and which debug function to use as callback. */
+    mbedtls_ssl_conf_rng( &conf, mbedtls_ctr_drbg_random, &ctr_drbg );
+    mbedtls_ssl_conf_dbg( &conf, mbedtls_alt_debug, stdout );
+
+//    mbedtls_ssl_setup(&ssl, &conf);
+
+    if (ret = mbedtls_ssl_set_hostname(&ssl, aws_get_arn()) != 0)
+    {
+        DebugPrint(" failed\n  ! mbedtls_ssl_set_hostname returned %d\n\n", ret);
+        return -1;
+    }
+
+    DebugPrint("Set host name success\r\n");
+    /* the SSL context needs to know the input and output functions it needs to use for sending out network traffic. */
+//    mbedtls_ssl_set_bio(&ssl, &mqtt_static_client, altcp_mbedtls_bio_send, altcp_mbedtls_bio_recv, NULL);
+
+    return 0; /* no error */
+}
+
+#endif 
 
 static void mqtt_sub_request_cb(void *arg, err_t result)
 {
@@ -286,6 +449,9 @@ void mqtt_user_polling_task(void)
                 m_mqtt_state = MQTT_USER_STATE_RESOLVING_HOSTNAME;
                 m_mqtt_tick_sec = 4;
                 last_time_send_sub_req = 0;
+#ifdef MQTT_WITH_SSL
+                tls_init();
+#endif /* MQTT_WITH_SSL */
                 break;
 
             case MQTT_USER_STATE_RESOLVING_HOSTNAME:

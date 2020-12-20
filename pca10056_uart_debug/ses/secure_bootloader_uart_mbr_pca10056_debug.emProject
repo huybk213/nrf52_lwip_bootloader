@@ -350,6 +350,8 @@
         <file file_name="../../../../../external/mbedtls/library/mbedtls_md5.c" />
         <file file_name="../../../../../external/mbedtls/library/sha256.c" />
         <file file_name="../../../../../external/mbedtls/library/sha512.c" />
+        <file file_name="../../../../../external/mbedtls/library/entropy.c" />
+        <file file_name="../../../../../external/mbedtls/library/base64.c" />
       </folder>
       <folder Name="custom">
         <file file_name="../../Internet/aws_iot/rng_alt_template.c" />
@@ -361,7 +363,7 @@
   <configuration
     Name="Release"
     c_preprocessor_definitions="CONFIG_NFCT_PINS_AS_GPIOS;MQTT_WITH_SSL;MBEDTLS_CONFIG_FILE=&quot;mbedtls_alt_config.h&quot;"
-    c_user_include_directories=".;./../../app_ota;./../../Internet/GSM;./../../Internet/Inc;./../../Internet/app_mqtt;./../../Internet/OTA;./../../Internet/lwip-2_1_2/src/include;./../../Internet/lwip-2_1_2/src/include/lwip;./../../Internet/lwip-2_1_2/src/include/netif;./../../Internet/lwip-2_1_2/src/include/netif/ppp;./../../Internet/lwip-2_1_2/src/lwip;./../../Internet/lwip-2_1_2/src/lwip/priv;./../../Internet/lwip-2_1_2/src/lwip/apps;./../../Internet/lwip-2_1_2/src/prot;./../../Internet/aws_iot;./../../../../../components/libraries/uart;./../../../../../components/libraries/timer;./../../../../../components/libraries/fifo;./../../../../../external/mbedtls/include;./../../../../../external/mbedtls/include/mbedtls;./../../../../../external/mbedtls/config"
+    c_user_include_directories=".;./../../app_ota;./../../Internet/GSM;./../../Internet/Inc;./../../Internet/app_mqtt;./../../Internet/OTA;./../../Internet/lwip-2_1_2/src/include;./../../Internet/lwip-2_1_2/src/include/lwip;./../../Internet/lwip-2_1_2/src/include/netif;./../../Internet/lwip-2_1_2/src/include/netif/ppp;./../../Internet/lwip-2_1_2/src/lwip;./../../Internet/lwip-2_1_2/src/lwip/priv;./../../Internet/lwip-2_1_2/src/lwip/apps;./../../Internet/lwip-2_1_2/src/prot;./../../Internet/aws_iot;./../../Internet/aws_iot/cert;./../../../../../components/libraries/uart;./../../../../../components/libraries/timer;./../../../../../components/libraries/fifo;./../../../../../external/mbedtls/include;./../../../../../external/mbedtls/include/mbedtls;./../../../../../external/mbedtls/config"
     gcc_optimization_level="Optimize For Size"
     link_time_optimization="No" />
 </solution>

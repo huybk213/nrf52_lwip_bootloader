@@ -6,7 +6,10 @@
 #include "nrf_log.h"
 
 
-#define DebugPrint      NRF_LOG_INFO
+//#define DebugPrint      NRF_LOG_INFO
+#ifndef DebugPrint
+#define DebugPrint      printf
+#endif
 
 #endif // !APP_DEBUG_H
 

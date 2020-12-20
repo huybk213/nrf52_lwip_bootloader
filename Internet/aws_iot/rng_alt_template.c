@@ -33,9 +33,52 @@
 #include "stdint.h"
 //#include "rand.h"
 /*
- * include the correct headerfile depending on the STM32 family */
-
+ * include the correct headerfile depending on the nRF52 family 
+*/
+#include <nrf_soc.h>
 #include <string.h>
+
+uint32_t rand_hw_rng_get(uint8_t* p_result, uint16_t len)
+{
+#ifdef SOFTDEVICE_PRESENT
+    uint32_t error_code;
+    uint8_t bytes_available;
+    uint32_t count = 0;
+    while (count < len)
+    {
+        do
+        {
+            sd_rand_application_bytes_available_get(&bytes_available);
+        } while (bytes_available == 0);
+
+        if (bytes_available > len - count)
+        {
+            bytes_available = len - count;
+        }
+
+        error_code =
+            sd_rand_application_vector_get(&p_result[count],
+            bytes_available);
+        if (error_code != NRF_SUCCESS)
+        {
+            return NRF_ERROR_INTERNAL;
+        }
+
+        count += bytes_available;
+    }
+#else
+    NRF_RNG->TASKS_START = 1;
+    while (len)
+    {
+        while (!NRF_RNG->EVENTS_VALRDY);
+        p_result[--len] = NRF_RNG->VALUE;
+        NRF_RNG->EVENTS_VALRDY = 0;
+    }
+    NRF_RNG->TASKS_STOP = 1;
+#endif
+    return NRF_SUCCESS;
+}
+
 
 int mbedtls_hardware_poll( void *Data, unsigned char *Output, size_t Len, size_t *oLen )
 {

@@ -220,6 +220,8 @@
 "Output/Release/Obj/secure_bootloader_uart_mbr_pca10056_debug/mbedtls_md5.o"
 "Output/Release/Obj/secure_bootloader_uart_mbr_pca10056_debug/sha256.o"
 "Output/Release/Obj/secure_bootloader_uart_mbr_pca10056_debug/sha512.o"
+"Output/Release/Obj/secure_bootloader_uart_mbr_pca10056_debug/entropy.o"
+"Output/Release/Obj/secure_bootloader_uart_mbr_pca10056_debug/base64.o"
 "Output/Release/Obj/secure_bootloader_uart_mbr_pca10056_debug/rng_alt_template.o"
 "Output/Release/Obj/secure_bootloader_uart_mbr_pca10056_debug/timing_alt_template.o"
 "/usr/share/segger_embedded_studio_for_arm_5.32a/lib/libm_v7em_fpv4_sp_d16_hard_t_le_eabi.a"
