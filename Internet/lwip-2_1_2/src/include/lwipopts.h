@@ -77,9 +77,14 @@
 #define SNTP_UPDATE_DELAY           60000	/* ms */
 
 // ===================== TCP_TLS - ENCRYPTED =================//
-//#define LWIP_ALTCP 	1
-//#define LWIP_ALTCP_TLS 1
-//#define LWIP_ALTCP_TLS_MBEDTLS 1
+#ifdef MQTT_WITH_SSL
+#define LWIP_ALTCP 	1
+#define LWIP_ALTCP_TLS 1
+#define LWIP_ALTCP_TLS_MBEDTLS 1
+#define ALTCP_MBEDTLS_DEBUG 1
+#define PBUF_POOL_SIZE 48
+#define TCP_WND (36 * TCP_MSS)
+#endif /* MQTT_WITH_SSL */
 
 // ====================== MQTT & HTTP =======================//
 #define LWIP_CALLBACK_API		1		/* MQTT & HTTP */

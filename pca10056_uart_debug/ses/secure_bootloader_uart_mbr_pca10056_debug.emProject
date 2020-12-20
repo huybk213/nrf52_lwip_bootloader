@@ -31,7 +31,7 @@
       linker_printf_width_precision_supported="Yes"
       linker_scanf_fmt_level="long"
       linker_section_placement_file="flash_placement.xml"
-      linker_section_placement_macros="FLASH_PH_START=0x0;FLASH_PH_SIZE=0x100000;RAM_PH_START=0x20000000;RAM_PH_SIZE=0x40000;FLASH_START=0xe4000;FLASH_SIZE=0x1a000;RAM_START=0x20000008;RAM_SIZE=0x3fff8"
+      linker_section_placement_macros="FLASH_PH_START=0x0;FLASH_PH_SIZE=0x100000;RAM_PH_START=0x20000000;RAM_PH_SIZE=0x40000;FLASH_START=0xA4000;FLASH_SIZE=0x3A000;RAM_START=0x20000008;RAM_SIZE=0x3fff8"
       linker_section_placements_segments="FLASH RX 0x0 0x100000;RAM RWX 0x20000000 0x40000;mbr_params_page RX 0x000FE000 0x1000;bootloader_settings_page RX 0x000FF000 0x1000;uicr_bootloader_start_address RX 0x10001014 0x4;uicr_mbr_params_page RX 0x10001018 0x4"
       macros="CMSIS_CONFIG_TOOL=../../../../../external_tools/cmsisconfig/CMSIS_Configuration_Wizard.jar"
       project_directory=""
@@ -84,6 +84,7 @@
         <configuration Name="Release" build_exclude_from_build="Yes" />
       </file>
       <file file_name="../../../../../components/libraries/fifo/app_fifo.c" />
+      <file file_name="../../../../../components/libraries/timer/app_timer.c" />
     </folder>
     <folder Name="nRF_Drivers">
       <file file_name="../../../../../integration/nrfx/legacy/nrf_drv_uart.c" />
@@ -176,7 +177,9 @@
             <file file_name="../../Internet/lwip-2_1_2/src/netif/ppp/chap-new.c" />
             <file file_name="../../Internet/lwip-2_1_2/src/netif/ppp/demand.c" />
             <file file_name="../../Internet/lwip-2_1_2/src/netif/ppp/eap.c" />
-            <file file_name="../../Internet/lwip-2_1_2/src/netif/ppp/ecp.c" />
+            <file file_name="../../Internet/lwip-2_1_2/src/netif/ppp/ecp.c">
+              <configuration Name="Release" build_exclude_from_build="Yes" />
+            </file>
             <file file_name="../../Internet/lwip-2_1_2/src/netif/ppp/eui64.c" />
             <file file_name="../../Internet/lwip-2_1_2/src/netif/ppp/ipcp.c" />
             <file file_name="../../Internet/lwip-2_1_2/src/netif/ppp/lcp.c" />
@@ -232,12 +235,27 @@
           <folder Name="http">
             <file file_name="../../Internet/lwip-2_1_2/src/apps/http/http_client.c" />
           </folder>
+          <folder Name="altcp_tls">
+            <file file_name="../../Internet/lwip-2_1_2/src/apps/altcp_tls/altcp_tls_mbedtls.c" />
+            <file file_name="../../Internet/lwip-2_1_2/src/apps/altcp_tls/altcp_tls_mbedtls_mem.c" />
+            <file file_name="../../Internet/lwip-2_1_2/src/apps/altcp_tls/altcp_tls_mbedtls_mem.h" />
+            <file file_name="../../Internet/lwip-2_1_2/src/apps/altcp_tls/altcp_tls_mbedtls_structs.h" />
+          </folder>
+        </folder>
+        <folder Name="ssl">
+          <folder Name="core">
+            <file file_name="../../Internet/lwip-2_1_2/src/core/altcp_alloc.c" />
+            <file file_name="../../Internet/lwip-2_1_2/src/core/altcp.c" />
+            <file file_name="../../Internet/lwip-2_1_2/src/core/altcp_tcp.c" />
+          </folder>
         </folder>
       </folder>
       <folder Name="app_ota">
         <file file_name="../../Internet/OTA/update_firmware.c" />
         <file file_name="../../app_ota/app_bootloader_uart.c" />
-        <file file_name="../../app_ota/app_md5.c" />
+        <file file_name="../../app_ota/app_md5.c">
+          <configuration Name="Release" build_exclude_from_build="No" />
+        </file>
       </folder>
       <folder Name="inc">
         <file file_name="../../Internet/Inc/gsm_context.h" />
@@ -249,13 +267,101 @@
         <file file_name="../../Internet/app_mqtt/mqtt_client.c" />
         <file file_name="../../Internet/app_mqtt/mqtt_user.h" />
       </folder>
+      <folder Name="aws_iot">
+        <file file_name="../../Internet/aws_iot/cert/aws_certificate.c" />
+        <file file_name="../../Internet/aws_iot/cert/aws_certificate.h" />
+      </folder>
     </folder>
     <folder Name="more" />
+    <folder Name="mbedtls">
+      <folder Name="config" />
+      <folder Name="include" />
+      <folder Name="library">
+        <file file_name="../../../../../external/mbedtls/library/aesni.c" />
+        <file file_name="../../../../../external/mbedtls/library/arc4.c" />
+        <file file_name="../../../../../external/mbedtls/library/aria.c" />
+        <file file_name="../../../../../external/mbedtls/library/asn1parse.c" />
+        <file file_name="../../../../../external/mbedtls/library/asn1write.c" />
+        <file file_name="../../../../../external/mbedtls/library/bignum.c" />
+        <file file_name="../../../../../external/mbedtls/library/blowfish.c" />
+        <file file_name="../../../../../external/mbedtls/library/camellia.c" />
+        <file file_name="../../../../../external/mbedtls/library/ccm.c" />
+        <file file_name="../../../../../external/mbedtls/library/certs.c" />
+        <file file_name="../../../../../external/mbedtls/library/chacha20.c" />
+        <file file_name="../../../../../external/mbedtls/library/chachapoly.c" />
+        <file file_name="../../../../../external/mbedtls/library/cipher.c" />
+        <file file_name="../../../../../external/mbedtls/library/cipher_wrap.c" />
+        <file file_name="../../../../../external/mbedtls/library/cmac.c" />
+        <file file_name="../../../../../external/mbedtls/library/ctr_drbg.c" />
+        <file file_name="../../../../../external/mbedtls/library/debug.c" />
+        <file file_name="../../../../../external/mbedtls/library/des.c" />
+        <file file_name="../../../../../external/mbedtls/library/dhm.c" />
+        <file file_name="../../../../../external/mbedtls/library/ecdh.c" />
+        <file file_name="../../../../../external/mbedtls/library/ecdsa.c" />
+        <file file_name="../../../../../external/mbedtls/library/ecjpake.c" />
+        <file file_name="../../../../../external/mbedtls/library/ecp.c" />
+        <file file_name="../../../../../external/mbedtls/library/error.c" />
+        <file file_name="../../../../../external/mbedtls/library/gcm.c" />
+        <file file_name="../../../../../external/mbedtls/library/havege.c" />
+        <file file_name="../../../../../external/mbedtls/library/hkdf.c" />
+        <file file_name="../../../../../external/mbedtls/library/hmac_drbg.c" />
+        <file file_name="../../../../../external/mbedtls/library/md2.c" />
+        <file file_name="../../../../../external/mbedtls/library/md4.c" />
+        <file file_name="../../../../../external/mbedtls/library/md.c" />
+        <file file_name="../../../../../external/mbedtls/library/md_wrap.c" />
+        <file file_name="../../../../../external/mbedtls/library/memory_buffer_alloc.c" />
+        <file file_name="../../../../../external/mbedtls/library/nist_kw.c" />
+        <file file_name="../../../../../external/mbedtls/library/oid.c" />
+        <file file_name="../../../../../external/mbedtls/library/padlock.c" />
+        <file file_name="../../../../../external/mbedtls/library/pem.c" />
+        <file file_name="../../../../../external/mbedtls/library/pk.c" />
+        <file file_name="../../../../../external/mbedtls/library/pkcs11.c" />
+        <file file_name="../../../../../external/mbedtls/library/pkcs12.c" />
+        <file file_name="../../../../../external/mbedtls/library/pkcs5.c" />
+        <file file_name="../../../../../external/mbedtls/library/pkparse.c" />
+        <file file_name="../../../../../external/mbedtls/library/pk_wrap.c" />
+        <file file_name="../../../../../external/mbedtls/library/pkwrite.c" />
+        <file file_name="../../../../../external/mbedtls/library/platform.c" />
+        <file file_name="../../../../../external/mbedtls/library/platform_util.c" />
+        <file file_name="../../../../../external/mbedtls/library/poly1305.c" />
+        <file file_name="../../../../../external/mbedtls/library/ripemd160.c" />
+        <file file_name="../../../../../external/mbedtls/library/rsa.c" />
+        <file file_name="../../../../../external/mbedtls/library/rsa_internal.c" />
+        <file file_name="../../../../../external/mbedtls/library/sha1.c" />
+        <file file_name="../../../../../external/mbedtls/library/ssl_cache.c" />
+        <file file_name="../../../../../external/mbedtls/library/ssl_ciphersuites.c" />
+        <file file_name="../../../../../external/mbedtls/library/ssl_cli.c" />
+        <file file_name="../../../../../external/mbedtls/library/ssl_cookie.c" />
+        <file file_name="../../../../../external/mbedtls/library/ssl_srv.c" />
+        <file file_name="../../../../../external/mbedtls/library/ssl_ticket.c" />
+        <file file_name="../../../../../external/mbedtls/library/ssl_tls.c" />
+        <file file_name="../../../../../external/mbedtls/library/version.c" />
+        <file file_name="../../../../../external/mbedtls/library/version_features.c" />
+        <file file_name="../../../../../external/mbedtls/library/x509.c" />
+        <file file_name="../../../../../external/mbedtls/library/x509_create.c" />
+        <file file_name="../../../../../external/mbedtls/library/x509_crl.c" />
+        <file file_name="../../../../../external/mbedtls/library/x509_crt.c" />
+        <file file_name="../../../../../external/mbedtls/library/x509_csr.c" />
+        <file file_name="../../../../../external/mbedtls/library/x509write_crt.c" />
+        <file file_name="../../../../../external/mbedtls/library/x509write_csr.c" />
+        <file file_name="../../../../../external/mbedtls/library/xtea.c" />
+        <file file_name="../../../../../external/mbedtls/library/aes.c" />
+        <file file_name="../../../../../external/mbedtls/library/ecp_curves.c" />
+        <file file_name="../../../../../external/mbedtls/library/mbedtls_md5.c" />
+        <file file_name="../../../../../external/mbedtls/library/sha256.c" />
+        <file file_name="../../../../../external/mbedtls/library/sha512.c" />
+      </folder>
+      <folder Name="custom">
+        <file file_name="../../Internet/aws_iot/rng_alt_template.c" />
+        <file file_name="../../Internet/aws_iot/timing_alt_template.c" />
+        <file file_name="../../Internet/aws_iot/mbedtls_alt_config.h" />
+      </folder>
+    </folder>
   </project>
   <configuration
     Name="Release"
-    c_preprocessor_definitions="CONFIG_NFCT_PINS_AS_GPIOS"
-    c_user_include_directories=".;./../../app_ota;./../../Internet/GSM;./../../Internet/Inc;./../../Internet/app_mqtt;./../../Internet/OTA;./../../Internet/lwip-2_1_2/src/include;./../../Internet/lwip-2_1_2/src/include/lwip;./../../Internet/lwip-2_1_2/src/include/netif;./../../Internet/lwip-2_1_2/src/include/netif/ppp;./../../Internet/lwip-2_1_2/src/lwip;./../../Internet/lwip-2_1_2/src/lwip/priv;./../../Internet/lwip-2_1_2/src/lwip/apps;./../../Internet/lwip-2_1_2/src/prot;./../../../../../components/libraries/uart;./../../../../../components/libraries/fifo"
+    c_preprocessor_definitions="CONFIG_NFCT_PINS_AS_GPIOS;MQTT_WITH_SSL;MBEDTLS_CONFIG_FILE=&quot;mbedtls_alt_config.h&quot;"
+    c_user_include_directories=".;./../../app_ota;./../../Internet/GSM;./../../Internet/Inc;./../../Internet/app_mqtt;./../../Internet/OTA;./../../Internet/lwip-2_1_2/src/include;./../../Internet/lwip-2_1_2/src/include/lwip;./../../Internet/lwip-2_1_2/src/include/netif;./../../Internet/lwip-2_1_2/src/include/netif/ppp;./../../Internet/lwip-2_1_2/src/lwip;./../../Internet/lwip-2_1_2/src/lwip/priv;./../../Internet/lwip-2_1_2/src/lwip/apps;./../../Internet/lwip-2_1_2/src/prot;./../../Internet/aws_iot;./../../../../../components/libraries/uart;./../../../../../components/libraries/timer;./../../../../../components/libraries/fifo;./../../../../../external/mbedtls/include;./../../../../../external/mbedtls/include/mbedtls;./../../../../../external/mbedtls/config"
     gcc_optimization_level="Optimize For Size"
     link_time_optimization="No" />
 </solution>

@@ -107,7 +107,7 @@ SECTIONS
   {
     __reserved_flash_start__ = .;
     *(.reserved_flash .reserved_flash.*)
-    . = MAX(__reserved_flash_start__ + 0xe4000-0x0 , .);
+    . = MAX(__reserved_flash_start__ + 0xA4000-0x0 , .);
   }
   __reserved_flash_end__ = __reserved_flash_start__ + SIZEOF(.reserved_flash);
   __reserved_flash_size__ = SIZEOF(.reserved_flash);
@@ -115,8 +115,8 @@ SECTIONS
 
   . = ASSERT(__reserved_flash_start__ == __reserved_flash_end__ || (__reserved_flash_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__ , "error: .reserved_flash is too large to fit in FLASH memory segment");
 
-  __vectors_load_start__ = 0xe4000;
-  .vectors 0xe4000 : AT(0xe4000)
+  __vectors_load_start__ = 0xA4000;
+  .vectors 0xA4000 : AT(0xA4000)
   {
     __vectors_start__ = .;
     *(.vectors .vectors.*)

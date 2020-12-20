@@ -10,6 +10,15 @@
 #include "mqtt_user.h"
 #include "main.h"
 
+#ifdef MQTT_WITH_SSL
+#include "mbedtls/ssl.h"
+#include "mbedtls/entropy.h"
+#include "mbedtls/ctr_drbg.h"
+#include "lwip/altcp.h"
+#include "lwip/altcp_tls.h"
+#include "lwip/priv/altcp_priv.h"
+#endif
+
 #define MQTT_KEEP_ALIVE_INTERVAL_SEC 600
 #define APP_MQTT_HOST   "broker.hivemq.com"
 #define APP_MQTT_PORT   1883
