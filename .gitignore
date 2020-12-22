@@ -60,3 +60,8 @@ pca10056_uart_debug/arm5_no_packs/nrf52840_xxaa_mbr.bin/
 pca10056_uart_debug/arm5_no_packs/JLinkLog.txt
 
 pca10056_uart_debug/arm5_no_packs/JLinkSettings.ini
+Internet/aws_iot/cert/*
+
+pca10056_uart_debug/ses/Output/Release/Exe/
+
+pca10056_uart_debug/ses/Output/Release/Obj/secure_bootloader_uart_mbr_pca10056_debug/

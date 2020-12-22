@@ -200,6 +200,9 @@ static void ppp_notify_phase_cb(ppp_pcb *pcb, u8_t phase, void *ctx)
     case PPP_PHASE_NETWORK:
         DebugPrint("PPP_PHASE_NETWORK\r\n");
         break;
+    case PPP_PHASE_ESTABLISH:
+        DebugPrint("PPP_PHASE_ESTABLISH\r\n");
+        break;
 
     /* Session is running */
     case PPP_PHASE_RUNNING:
@@ -217,7 +220,7 @@ static void ppp_notify_phase_cb(ppp_pcb *pcb, u8_t phase, void *ctx)
         break;
 
     default:
-        DebugPrint("PPP phase %d\r\n", phase);
+        DebugPrint("Unknown PPP phase %d\r\n", phase);
         break;
     }
 }

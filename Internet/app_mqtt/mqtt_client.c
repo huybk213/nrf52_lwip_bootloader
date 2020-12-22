@@ -21,8 +21,15 @@
 #endif
 
 #define MQTT_KEEP_ALIVE_INTERVAL_SEC 600
+
+#ifndef MQTT_WITH_SSL
 #define APP_MQTT_HOST   "broker.hivemq.com"
 #define APP_MQTT_PORT   1883
+#else
+#define APP_MQTT_HOST   aws_get_arn()
+#define APP_MQTT_PORT   aws_get_mqtt_port()
+#endif /* MQTT_WITH_SSL */
+
 #define APP_MQTT_PERIOD_SEND_SUB_REQUEST_SEC    120
 
 static char m_mqtt_sub_topic_name[48];
@@ -48,7 +55,8 @@ static mbedtls_ctr_drbg_context ctr_drbg;
 static void mbedtls_alt_debug(void *ctx, int level, const char *file, int line, const char *str) 
 {
     ((void)level);
-    //{DebugPrint("\r\n%s, at line %d in file %s\n", str, line, file);}
+    {printf("\r\n%s, at line %d in file %s\n", str, line, file);}
+    fflush(stdout);
 }
 
 static int mqtt_tls_verify(void *data, mbedtls_x509_crt *crt, int depth, int *flags) 
@@ -99,7 +107,28 @@ void tls_close(void)
 
 static int tls_init(void) 
 {
+    static bool inited = false;
+    if (inited)
+    {
+        return 0;
+    }
+    inited = true;
+    
+    char * p = (char*)calloc(100000, 1);
+    if (p == NULL)
+    {
+        printf("calloc failed\r\n");
+    }
+    else
+    {
+        printf("calloc success\r\n");
+        free(p);
+    }
+
     DebugPrint("TLS initialize\r\n");
+
+    mbedtls_debug_set_threshold(0);
+    //return 0;
 
     /* inspired by https://tls.mbed.org/kb/how-to/mbedtls-tutorial */
     int ret;
@@ -145,7 +174,7 @@ static int tls_init(void)
                                 strlen(aws_certificate_get_root_ca())+1);
     if (ret != 0)
     {
-        DebugPrint("Parse root ca error\r\n");
+        DebugPrint("Parse root ca error -0x%04X\r\n", ret);
         return -1;
     }
     
@@ -154,7 +183,7 @@ static int tls_init(void)
                                 strlen(aws_certificate_get_client_cert())+1);
     if (ret != 0)
     {
-        DebugPrint("Parse client key error\r\n");
+        DebugPrint("Parse x509_client_key error -0x%04X\r\n", ret);
         return -1;
     }
 
@@ -163,7 +192,7 @@ static int tls_init(void)
                                 strlen(aws_certificate_get_client_key())+1, NULL, 0);
     if (ret != 0)
     {
-        DebugPrint("Parse private key error\r\n");
+        DebugPrint("Parse pk_private_key error -0x%04X\r\n", ret);
         return -1;
     }
     
@@ -368,6 +397,12 @@ static int8_t mqtt_client_connect_to_broker(mqtt_client_t *client)
         NULL, NULL, 0, 0		  //Will topic, will msg, will QoS, will retain
     };
 
+    if (client_info.tls_config == NULL) 
+    client_info.tls_config = altcp_tls_create_config_client_2wayauth((const u8_t*)aws_certificate_get_root_ca(), strlen((char*)aws_certificate_get_root_ca()) + 1,
+                                                            (const u8_t*)aws_certificate_get_client_key(), strlen((char*)aws_certificate_get_client_key()) + 1,
+                                                            NULL, NULL,
+                                                            (const u8_t*)aws_certificate_get_client_cert(), strlen((char*)aws_certificate_get_client_cert()) + 1);
+
     /* Minimal amount of information required is client identifier, so set it here */
     //client_info.client_user = "";
     //client_info.client_pass = "";
@@ -392,12 +427,14 @@ static int8_t mqtt_client_connect_to_broker(mqtt_client_t *client)
         if (err == ERR_ISCONN)
         {
             DebugPrint("MQTT already connected\r\n");
+            return ERR_OK;
         }
     }
     else
     {
-        DebugPrint("Host %s-%s, client id %s\r\n", 
-                    APP_MQTT_HOST, ipaddr_ntoa(&m_mqtt_server_address), 
+        DebugPrint("Host %s-%s, port %d, client id %s\r\n", 
+                    APP_MQTT_HOST, ipaddr_ntoa(&m_mqtt_server_address),
+                    APP_MQTT_PORT,
                     client_id);
         DebugPrint("mqtt_client_connect: OK\r\n");
     }
@@ -450,7 +487,10 @@ void mqtt_user_polling_task(void)
                 m_mqtt_tick_sec = 4;
                 last_time_send_sub_req = 0;
 #ifdef MQTT_WITH_SSL
-                tls_init();
+                if (tls_init() != 0)
+                {
+                    APP_ERROR_CHECK(1);
+                }
 #endif /* MQTT_WITH_SSL */
                 break;
 

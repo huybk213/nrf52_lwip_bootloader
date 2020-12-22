@@ -169,8 +169,9 @@ int main(void)
 {
     (void)NRF_LOG_INIT(nrf_bootloader_dfu_timer_counter_get);
     NRF_LOG_DEFAULT_BACKENDS_INIT();
+    printf("Hello world\r\n");
 
-    NRF_LOG_INFO("Build %s", __DATE__);
+    //NRF_LOG_INFO("Build %s", __DATE__);
     NRF_LOG_FLUSH();
    
     gsm_start();

@@ -76,13 +76,14 @@ uint32_t app_bootloader_uart_write(uint8_t *data, uint32_t length)
     uint32_t err;
     for (uint32_t i = 0; i < length; i++)
     {
-        err = app_uart_put(*(data + i));
-        if (err != NRF_SUCCESS)
-        {
-            NRF_LOG_INFO("UART TX error %d, idx %d\r\n", err, i);
-            APP_ERROR_CHECK(err);
-            return i;
-        }
+        while((err = app_uart_put(*(data + i))) != NRF_SUCCESS);
+        //err = app_uart_put(*(data + i));
+        //if (err != NRF_SUCCESS)
+        //{
+        //    NRF_LOG_INFO("UART TX error %d, idx %d\r\n", err, i);
+        //    APP_ERROR_CHECK(err);
+        //    return i;
+        //}
     }
 
     return length;

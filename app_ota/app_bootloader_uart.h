@@ -8,7 +8,7 @@
 #endif //UART_TX_BUF_SIZE
 
 #ifndef UART_RX_BUF_SIZE
-#define UART_RX_BUF_SIZE 256 /**< UART RX buffer size. */
+#define UART_RX_BUF_SIZE 512 /**< UART RX buffer size. */
 #endif                       //UART_RX_BUF_SIZE
 
 /**

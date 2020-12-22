@@ -52,7 +52,7 @@
 // ======================= FOR DEBUG =====================//
 //#define LWIP_TESTMODE                   1
 
-//#define LWIP_DEBUG	LWIP_DBG_OFF		//ON : Tang dung luong hex len khoang 5KB!
+#define LWIP_DEBUG	LWIP_DBG_ON		//ON : Tang dung luong hex len khoang 5KB!
 //#define PPP_DEBUG 1
 //#define DNS_DEBUG	LWIP_DBG_ON
 //#define LWIP_PLATFORM_DIAG(x) printf("\r\n"); printf x
@@ -81,9 +81,10 @@
 #define LWIP_ALTCP 	1
 #define LWIP_ALTCP_TLS 1
 #define LWIP_ALTCP_TLS_MBEDTLS 1
-#define ALTCP_MBEDTLS_DEBUG 1
+#define ALTCP_MBEDTLS_DEBUG LWIP_DBG_ON
 #define PBUF_POOL_SIZE 48
-#define TCP_WND (36 * TCP_MSS)
+#define TCP_WND (32 * TCP_MSS)
+#define ALTCP_MBEDTLS_MEM_DEBUG LWIP_DBG_ON
 #endif /* MQTT_WITH_SSL */
 
 // ====================== MQTT & HTTP =======================//
@@ -103,10 +104,10 @@
 #define PPP_NOTIFY_PHASE 1
 //#define LINK_STATS 1
 
-#define DNS_TABLE_SIZE        (2) 
+#define DNS_TABLE_SIZE        (3) 
 #define DNS_MAX_NAME_LENGTH   (128)
 
-
+#define LWIP_PLATFORM_ASSERT
 // ====================== FOR CHECKSUM =====================//
 //#define LWIP_CHECKSUM_ON_COPY           1
 //#define TCP_CHECKSUM_ON_COPY_SANITY_CHECK 1
@@ -114,10 +115,10 @@
 
 //===================== REDUCE CODE SIZE ===================//
 //using the C runtime memory functions (malloc, free, etc.) => to reduce code size
-//#define MEM_LIBC_MALLOC 1		//Giam duoc 1KB code size
+#define MEM_LIBC_MALLOC 1		//Giam duoc 1KB code size
 
 //to prevent assertion code being included => reduce code
-#define LWIP_NOASSERT  1		//Giam duoc vai chuc KB code size!
+//#define LWIP_NOASSERT  1		//Giam duoc vai chuc KB code size!
 
 
 //#define LWIP_NETCONN_FULLDUPLEX         LWIP_SOCKET
@@ -137,13 +138,13 @@
  * when opening a connection. For the transmit size, this MSS sets
  * an upper limit on the MSS advertised by the remote host.
  */
-//#define TCP_MSS                         1460
+#define TCP_MSS                         1460
 
 /**
  * TCP_SND_BUF: TCP sender buffer space (bytes).
  * To achieve good performance, this should be at least 2 * TCP_MSS.
  */
-//#define TCP_SND_BUF                     (2 * TCP_MSS)
+#define TCP_SND_BUF                     (3 * TCP_MSS)
 
 /**
  * TCP_SND_QUEUELEN: TCP sender buffer space (pbufs). This must be at least
@@ -173,7 +174,7 @@
  * MEM_SIZE: the size of the heap memory. If the application will send
  * a lot of data that needs to be copied, this should be set high.
  */
-//#define MEM_SIZE                        16000		//1600 - default
+#define MEM_SIZE                        96000		//1600 - default
 //#define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 	1
 
 /**
