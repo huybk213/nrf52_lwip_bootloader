@@ -65,3 +65,4 @@ Internet/aws_iot/cert/*
 pca10056_uart_debug/ses/Output/Release/Exe/
 
 pca10056_uart_debug/ses/Output/Release/Obj/secure_bootloader_uart_mbr_pca10056_debug/
+pca10056_uart_debug/ses/secure_bootloader_uart_mbr_pca10056_debug.emSession
