@@ -11,6 +11,7 @@
 #include "app_error.h"
 #include "app_error_weak.h"
 #include "nrf_drv_systick.h"
+#include "nrf_drv_clock.h"
 #include "nrf_delay.h"
 #include "gsm_context.h"
 #include "hardware.h"
@@ -24,7 +25,14 @@
 #include "main.h"
 #include "mqtt_user.h"
 
-static volatile uint32_t m_sys_tick = 0;
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+#include "semphr.h"
+
+static TaskHandle_t m_logger_thread, m_gsm_task;  
+
+//static volatile uint32_t m_sys_tick = 0;
 
 static void on_error(void)
 {
@@ -102,14 +110,68 @@ bool gsm_gpio_get(uint32_t pin)
     return nrf_gpio_pin_read(pin) ? true : false;
 }
 
+static void clock_init(void)
+{
+    ret_code_t err_code = nrf_drv_clock_init();
+    APP_ERROR_CHECK(err_code);
+}
+
 static void board_clock_initialize(void)
 {
     // Start HFCLK and wait for it to start.
     NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
     NRF_CLOCK->TASKS_HFCLKSTART = 1;
-    while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0)
-        ;
+    while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0);
+
+    clock_init();
+
 }
+
+static void logger_thread(void * arg)
+{
+    UNUSED_PARAMETER(arg);
+
+    while (1)
+    {
+        NRF_LOG_FLUSH();
+
+        vTaskSuspend(NULL); // Suspend myself
+        //vTaskDelay(1024);
+        //printf(".");
+    }
+}
+
+static void gsm_task(void * arg)
+{
+    static uint32_t tick = 0;
+
+    while (1)
+    {
+        gsm_hw_polling_task();
+
+        gsm_state_polling_task();
+
+        gsm_hw_lwip_polling_task();
+
+        if (sys_get_tick_ms() - tick > 1000)
+        {
+            // should call every 1sec
+            mqtt_user_polling_task();
+            tick = sys_get_tick_ms();
+        }
+
+        vTaskDelay(1);
+    }
+}
+
+/**@brief A function which is hooked to idle task.
+ * @note Idle hook must be enabled in FreeRTOS configuration (configUSE_IDLE_HOOK).
+ */
+void vApplicationIdleHook( void )
+{
+    vTaskResume(m_logger_thread);
+}
+
 
 void gsm_start(void)
 {
@@ -141,28 +203,27 @@ void gsm_start(void)
     gsm_conf.hw_polling_ms = 100; // should be 100ms
     gsm_hw_initialize(&gsm_conf);
 
-    nrf_drv_systick_init();
+    //nrf_drv_systick_init();
 
-    SysTick_Config(SystemCoreClock / 1000);
-    NVIC_EnableIRQ(SysTick_IRQn);
+    //SysTick_Config(SystemCoreClock / 1000);
+    //NVIC_EnableIRQ(SysTick_IRQn);
 
     mqtt_set_sub_topic_name("huytv/test/123456");
-    static uint32_t tick = 0;
-    while (1)
+
+    // Start execution.
+    if (pdPASS != xTaskCreate(gsm_task, "gsm", 4096, NULL, 1, &m_gsm_task))
     {
-        gsm_hw_polling_task();
-
-        gsm_state_polling_task();
-
-        gsm_hw_lwip_polling_task();
-
-        if (sys_get_tick_ms() - tick > 1000)
-        {
-            // should call every 1sec
-            mqtt_user_polling_task();
-            tick = sys_get_tick_ms();
-        }
+        APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
     }
+
+    // Start execution.
+    if (pdPASS != xTaskCreate(logger_thread, "LOGGER", 256, NULL, 1, &m_logger_thread))
+    {
+        APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
+    }
+
+    vTaskStartScheduler();
+    ASSERT(-1);
 }
 
 int main(void)
@@ -182,7 +243,7 @@ int main(void)
  */
 uint32_t sys_now(void)
 {
-    return m_sys_tick;
+    return (xTaskGetTickCount() * 1000) / 1024;
 }
 
 /**
@@ -190,18 +251,18 @@ uint32_t sys_now(void)
  */
 uint32_t sys_jiffies(void)
 {
-    return m_sys_tick;
+    return (xTaskGetTickCount() * 1000) / 1024;
 }
 
-/** 
- * @brief SysTick interrupt handler
- */
-void SysTick_Handler(void)
-{
-    m_sys_tick++;
-}
+///** 
+// * @brief SysTick interrupt handler
+// */
+//void SysTick_Handler(void)
+//{
+//    m_sys_tick++;
+//}
 
 uint32_t sys_get_tick_ms(void)
 {
-    return m_sys_tick;
+    return  (xTaskGetTickCount() * 1000) / 1024;
 }

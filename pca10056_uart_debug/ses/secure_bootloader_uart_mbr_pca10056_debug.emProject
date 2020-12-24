@@ -85,6 +85,8 @@
       </file>
       <file file_name="$(SDK_ROOT)/components/libraries/fifo/app_fifo.c" />
       <file file_name="$(SDK_ROOT)/components/libraries/timer/app_timer.c" />
+      <file file_name="../../../nRF5_SDK_17.0.0_9d13099/integration/nrfx/legacy/nrf_drv_clock.c" />
+      <file file_name="../../../nRF5_SDK_17.0.0_9d13099/modules/nrfx/drivers/src/nrfx_clock.c" />
     </folder>
     <folder Name="nRF_Drivers">
       <file file_name="$(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_uart.c" />
@@ -111,6 +113,7 @@
       <file file_name="../../main.c" />
       <file file_name="../config/sdk_config.h" />
       <file file_name="../../Internet/mbedtls_md5.c" />
+      <file file_name="../../FreeRTOSConfig.h" />
     </folder>
     <folder Name="nRF_Segger_RTT">
       <file file_name="$(SDK_ROOT)/external/segger_rtt/SEGGER_RTT.c" />
@@ -359,13 +362,46 @@
         <file file_name="../../Internet/aws_iot/mbedtls_alt_config.h" />
       </folder>
     </folder>
-    <configuration Name="Release" arm_linker_heap_size="96000" />
+    <configuration Name="Release" arm_linker_heap_size="8192" />
+    <folder Name="FreeRTOS">
+      <folder Name="src">
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/croutine.c" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/event_groups.c" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/list.c" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/queue.c" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/stream_buffer.c" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/tasks.c" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/timers.c" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/portable/MemMang/heap_4.c" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/portable/CMSIS/nrf52/port_cmsis.c" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/portable/CMSIS/nrf52/port_cmsis_systick.c" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/projdefs.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/stdint.readme" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/portable/GCC/nrf52/port.c" />
+      </folder>
+      <folder Name="inc">
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/croutine.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/deprecated_definitions.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/event_groups.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/list.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/portable/CMSIS/nrf52/portmacro_cmsis.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/queue.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/semphr.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/StackMacros.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/stack_macros.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/stream_buffer.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/timers.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/task.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/FreeRTOS.h" />
+        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/message_buffer.h" />
+      </folder>
+    </folder>
   </project>
   <configuration
     Name="Release"
     arm_linker_heap_size="128000"
-    c_preprocessor_definitions="CONFIG_NFCT_PINS_AS_GPIOS;MQTT_WITH_SSL;MBEDTLS_CONFIG_FILE=&quot;mbedtls_alt_config.h&quot;"
-    c_user_include_directories=".;./../../app_ota;./../../Internet/GSM;./../../Internet/Inc;./../../Internet/app_mqtt;./../../Internet/OTA;./../../Internet/lwip-2_1_2/src/include;./../../Internet/lwip-2_1_2/src/include/lwip;./../../Internet/lwip-2_1_2/src/include/netif;./../../Internet/lwip-2_1_2/src/include/netif/ppp;./../../Internet/lwip-2_1_2/src/lwip;./../../Internet/lwip-2_1_2/src/lwip/priv;./../../Internet/lwip-2_1_2/src/lwip/apps;./../../Internet/lwip-2_1_2/src/prot;./../../Internet/aws_iot;./../../Internet/aws_iot/cert;$(SDK_ROOT)/components/libraries/uart;$(SDK_ROOT)/components/libraries/timer;$(SDK_ROOT)/components/libraries/fifo;$(SDK_ROOT)/external/mbedtls/include;$(SDK_ROOT)/external/mbedtls/include/mbedtls;$(SDK_ROOT)/external/mbedtls/config"
+    c_preprocessor_definitions="CONFIG_NFCT_PINS_AS_GPIOS;MBEDTLS_CONFIG_FILE=&quot;mbedtls_alt_config.h&quot;"
+    c_user_include_directories=".;./../../app_ota;./../../Internet/GSM;./../../Internet/Inc;./../../Internet/app_mqtt;./../../Internet/OTA;./../../Internet/lwip-2_1_2/src/include;./../../Internet/lwip-2_1_2/src/include/lwip;./../../Internet/lwip-2_1_2/src/include/netif;./../../Internet/lwip-2_1_2/src/include/netif/ppp;./../../Internet/lwip-2_1_2/src/lwip;./../../Internet/lwip-2_1_2/src/lwip/priv;./../../Internet/lwip-2_1_2/src/lwip/apps;./../../Internet/lwip-2_1_2/src/prot;./../../Internet/aws_iot;./../../Internet/aws_iot/cert;$(SDK_ROOT)/components/libraries/uart;$(SDK_ROOT)/components/libraries/timer;$(SDK_ROOT)/components/libraries/fifo;$(SDK_ROOT)/external/mbedtls/include;$(SDK_ROOT)/external/mbedtls/include/mbedtls;$(SDK_ROOT)/external/mbedtls/config;$(SDK_ROOT)/external/freertos/source/include;$(SDK_ROOT)/external/freertos/portable/ARM/nrf52;$(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52"
     gcc_optimization_level="None"
     link_time_optimization="No" />
   <configuration Name="Common" arm_linker_heap_size="128000" />

@@ -18,6 +18,7 @@
 #include "lwip/altcp_tls.h"
 #include "lwip/priv/altcp_priv.h"
 #include "aws_certificate.h"
+#include "mbedtls/debug.h"
 #endif
 
 #define MQTT_KEEP_ALIVE_INTERVAL_SEC 600
@@ -395,13 +396,13 @@ static int8_t mqtt_client_connect_to_broker(mqtt_client_t *client)
             MQTT_KEEP_ALIVE_INTERVAL_SEC, //Keep alive in seconds, 0 - disable
             NULL, NULL, 0, 0              //Will topic, will msg, will QoS, will retain
         };
-
+#ifdef MQTT_WITH_SSL
     if (client_info.tls_config == NULL)
         client_info.tls_config = altcp_tls_create_config_client_2wayauth((const u8_t *)aws_certificate_get_root_ca(), strlen((char *)aws_certificate_get_root_ca()) + 1,
                                                                          (const u8_t *)aws_certificate_get_client_key(), strlen((char *)aws_certificate_get_client_key()) + 1,
                                                                          NULL, NULL,
                                                                          (const u8_t *)aws_certificate_get_client_cert(), strlen((char *)aws_certificate_get_client_cert()) + 1);
-
+#endif
     /* Minimal amount of information required is client identifier, so set it here */
     //client_info.client_user = "";
     //client_info.client_pass = "";
