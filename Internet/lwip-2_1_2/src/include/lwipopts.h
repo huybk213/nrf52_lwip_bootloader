@@ -34,7 +34,7 @@
 
 // ======================= FOR SYSTEM ====================//
 /* We link to special sys_arch.c (for basic non-waiting API layers unit tests) */
-#define NO_SYS                          1
+#define NO_SYS                          0
 #define SYS_LIGHTWEIGHT_PROT            0
 #define LWIP_NETCONN                    !NO_SYS
 #define LWIP_SOCKET                     !NO_SYS
@@ -107,7 +107,10 @@
 #define DNS_TABLE_SIZE        (3) 
 #define DNS_MAX_NAME_LENGTH   (128)
 
+#ifndef LWIP_PLATFORM_ASSERT
 #define LWIP_PLATFORM_ASSERT
+#endif 
+
 // ====================== FOR CHECKSUM =====================//
 //#define LWIP_CHECKSUM_ON_COPY           1
 //#define TCP_CHECKSUM_ON_COPY_SANITY_CHECK 1
