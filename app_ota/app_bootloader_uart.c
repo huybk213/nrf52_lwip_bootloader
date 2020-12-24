@@ -7,6 +7,8 @@
 #include "nrf.h"
 #include "app_uart.h"
 #include "nrf_log.h"
+#include "nrf_gpio.h"
+
 #if defined NRF52840_XXAA || defined NRF52833_XXAA
 #include "nrf52840_peripherals.h"
 #else

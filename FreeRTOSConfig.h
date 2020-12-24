@@ -60,7 +60,7 @@
 #define configUSE_TICKLESS_IDLE 0
 #define configUSE_TICKLESS_IDLE_SIMPLE_DEBUG                                      1 /* See into vPortSuppressTicksAndSleep source code for explanation */
 #define configCPU_CLOCK_HZ                                                        ( SystemCoreClock )
-#define configTICK_RATE_HZ                                                        1024
+#define configTICK_RATE_HZ                                                        1000
 #define configMAX_PRIORITIES                                                      ( 3 )
 #define configMINIMAL_STACK_SIZE                                                  ( 60 )
 #define configTOTAL_HEAP_SIZE                                                     ( 100*1024 )
@@ -79,9 +79,9 @@
 
 /* Hook function related definitions. */
 #define configUSE_IDLE_HOOK 1
-#define configUSE_TICK_HOOK                                                       0
+#define configUSE_TICK_HOOK                                                       1
 #define configCHECK_FOR_STACK_OVERFLOW                                            0
-#define configUSE_MALLOC_FAILED_HOOK                                              0
+#define configUSE_MALLOC_FAILED_HOOK                                              1
 
 /* Run time and task stats gathering related definitions. */
 #define configGENERATE_RUN_TIME_STATS                                             0
@@ -153,7 +153,7 @@ standard names - or at least those used in the unmodified vector table. */
 
 #define vPortSVCHandler                                                           SVC_Handler
 #define xPortPendSVHandler                                                        PendSV_Handler
-
+//#define xPortPendSVHandler                                                        Systick_Handler
 
 /*-----------------------------------------------------------
  * Settings that are generated automatically

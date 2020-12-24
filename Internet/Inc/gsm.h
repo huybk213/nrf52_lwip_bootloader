@@ -18,12 +18,16 @@
 #define AT_CIMI "AT+CIMI\r"
 #define AT_CSQ "AT+CSQ\r"
 #define AT_CGREG "AT+CGREG=1\r"
+#define AT_CGREG_QUERY "AT+CGREG?\r"
+#define AT_CGREG_QUERY_OK "+CGREG: 1,1\r"
 #define AT_SETUP_APN "AT+CGDCONT=1,\"IP\",\"v-internet\"\r"
 #define ATV1 "ATV1\r"
 #define ATO "ATO\r"
 #define AT_CONNTECT "CONNECT"
-#define AT_ENTER_PPP "ATD*99***1#\r"
+//#define AT_ENTER_PPP "ATD*99***1#\r"      // SIM800C
+#define AT_ENTER_PPP "ATD*99#\r"        // GB96
 #define AT_COPS "AT+COPS?\r"
+#define AT_COPS_RESPONSE "+COPS: 0,0"
 #define AT_SWITCH_PPP_TO_AT_MODE "+++"
 #define AT_OK "OK"
 #define GSM_NO_CARRIER "NO CARRIER"
@@ -68,6 +72,7 @@ typedef struct
 {
     uint32_t power_key;
     uint32_t status_pin;
+    uint32_t reset_pin;
 } gsm_gpio_t;
 
 /**

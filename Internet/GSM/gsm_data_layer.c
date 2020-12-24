@@ -333,6 +333,8 @@ static void gsm_power_on(gsm_response_evt_t event, void *response_buffer)
         if (event != GSM_EVEN_OK)
         {
             DebugPrint("Connect to module GSM failed\r\n");
+            change_gsm_state(GSM_STATE_RESET);
+            return;
         }
         gsm_hw_send_at_cmd(AT_ECHO_OFF, AT_OK, 1000, 10, gsm_power_on);
     }
@@ -419,32 +421,43 @@ static void gsm_power_on(gsm_response_evt_t event, void *response_buffer)
     case 10:
     {
         DebugPrint("Setup SMS in text mode: %s\r\n", (event == GSM_EVEN_OK) ? "[OK]" : "[FAIL]");
-        gsm_hw_send_at_cmd(AT_SETUP_APN, AT_OK, 1000, 2, gsm_power_on);
+            gsm_hw_send_at_cmd(AT_CGREG, AT_OK, 1000, 4, gsm_power_on);
+        //gsm_hw_send_at_cmd(AT_SETUP_APN, AT_OK, 1000, 4, gsm_power_on);
     }
     break;
 
     case 11:
     {
-        DebugPrint("Setup APN : %s\r\n", (event == GSM_EVEN_OK) ? "[OK]" : "[FAIL]");
-        gsm_hw_send_at_cmd(AT_CGREG, AT_OK, 1000, 3, gsm_power_on);
+        DebugPrint("Register network : %s\r\n", (event == GSM_EVEN_OK) ? "[OK]" : "[FAIL]");
+        //DebugPrint("Setup APN : %s\r\n", (event == GSM_EVEN_OK) ? "[OK]" : "[FAIL]");
+        gsm_hw_send_at_cmd(AT_CGREG_QUERY, AT_CGREG_QUERY_OK, 1000, 5, gsm_power_on);
     }
     break;
 
     case 12:
     {
-        DebugPrint("Register GPRS network: %s\r\n", (event == GSM_EVEN_OK) ? "[OK]" : "[FAIL]");
-        gsm_hw_send_at_cmd(AT_CSQ, AT_OK, 1000, 5, gsm_power_on);
+        DebugPrint("Network register status %s\n", (char*)response_buffer);
+        gsm_hw_send_at_cmd(AT_SETUP_APN, AT_OK, 1000, 5, gsm_power_on);
     }
     break;
 
     case 13:
     {
+        DebugPrint("Setup APN : %s, response %s\r\n", (event == GSM_EVEN_OK) ? "[OK]" : "[FAIL]", (char*)response_buffer);
+        gsm_hw_send_at_cmd(AT_COPS, AT_COPS_RESPONSE, 3000, 2, gsm_power_on);
+    }
+        break;
+    
+    case 14:
+    {
+        DebugPrint("Operator %s\n", (char*)response_buffer);
         if (event != GSM_EVEN_OK)
         {
             DebugPrint("GSM: Cannot initialize module. Reset now\r\n");
             change_gsm_state(GSM_STATE_RESET);
             return;
         }
+
 
         if (gsm_utilities_get_signal_strength_from_buffer(response_buffer, &gsm_ctx()->gl_status.gsm_csq) == false)
         {
@@ -454,7 +467,7 @@ static void gsm_power_on(gsm_response_evt_t event, void *response_buffer)
         if (gsm_ctx()->gl_status.gsm_csq == GSM_CSQ_INVALID || gsm_ctx()->gl_status.gsm_csq == 0)
         {
             gsm_hw_send_at_cmd(AT_CSQ, AT_OK, 1000, 3, gsm_power_on);
-            m_gsm_manager.step = 12;
+            m_gsm_manager.step = 13;
         }
         else
         {
@@ -481,7 +494,7 @@ bool gsm_data_layer_is_ppp_connected(void)
 
 static void open_ppp_stack(gsm_response_evt_t event, void *response_buffer)
 {
-    DebugPrint("Open PPP stack\r\n");
+    DebugPrint("Open PPP stack, response buffer %s\r\n", (char*)response_buffer);
     static uint8_t retry_count = 0;
 
     switch (m_gsm_manager.step)
@@ -526,7 +539,7 @@ static void open_ppp_stack(gsm_response_evt_t event, void *response_buffer)
     break;
     case 4:
     {
-        DebugPrint("PPP state: %s\r\n", (event == GSM_EVEN_OK) ? "[OK]" : "[FAIL]");
+        DebugPrint("PPP state: %s, response buffer %s\r\n", (event == GSM_EVEN_OK) ? "[OK]" : "[FAIL]", (char*)response_buffer);
         m_gsm_manager.mode = GSM_PPP_MODE;
 
         if (event != GSM_EVEN_OK)

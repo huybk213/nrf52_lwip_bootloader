@@ -29,6 +29,7 @@
 #include "task.h"
 #include "timers.h"
 #include "semphr.h"
+#include "cpu_utils.h"
 
 static TaskHandle_t m_logger_thread, m_gsm_task;  
 
@@ -68,6 +69,7 @@ void app_error_handler_bare(uint32_t error_code)
 
 static void board_gpio_initialize(void)
 {
+#ifdef SIM800C_BOARD
     nrf_gpio_cfg_output(HW_GPIO_LED_GSM_B_PIN);
     nrf_gpio_cfg_output(HW_GPIO_LED_GSM_R_PIN);
 
@@ -86,6 +88,7 @@ static void board_gpio_initialize(void)
     //LED alarm OFF
     nrf_gpio_pin_clear(HW_GPIO_LED_STATUS_R_PIN);
     nrf_gpio_pin_set(HW_GPIO_LED_STATUS_B_PIN);
+#endif /* SIM800C_BOARD */
 }
 
 void gsm_io_initialize()
@@ -99,10 +102,17 @@ void gsm_io_initialize()
 
 void gsm_gpio_set(uint32_t pin, bool on_off)
 {
-    if (on_off)
-        nrf_gpio_pin_set(pin);
-    else
-        nrf_gpio_pin_clear(pin);
+    if (pin != 0xFFFFFFFF)
+    {
+        if (on_off)
+        {
+            nrf_gpio_pin_set(pin);
+        }
+        else
+        {
+            nrf_gpio_pin_clear(pin);
+        }
+    }
 }
 
 bool gsm_gpio_get(uint32_t pin)
@@ -160,17 +170,31 @@ static void gsm_task(void * arg)
             tick = sys_get_tick_ms();
         }
 
+        static uint16_t last_cpu;
+        uint16_t current_cpu = osGetCPUUsage();
+        if (last_cpu != current_cpu)
+        {
+            DebugPrint("CPU %d\r\n", current_cpu);
+            last_cpu = current_cpu;
+        }
+
         vTaskDelay(1);
     }
 }
 
-/**@brief A function which is hooked to idle task.
- * @note Idle hook must be enabled in FreeRTOS configuration (configUSE_IDLE_HOOK).
- */
-void vApplicationIdleHook( void )
+void vApplicationMallocFailedHook(void)
 {
-    vTaskResume(m_logger_thread);
+    APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
 }
+
+
+///**@brief A function which is hooked to idle task.
+// * @note Idle hook must be enabled in FreeRTOS configuration (configUSE_IDLE_HOOK).
+// */
+//void vApplicationIdleHook( void )
+//{
+//    vTaskResume(m_logger_thread);
+//}
 
 
 void gsm_start(void)
@@ -197,6 +221,7 @@ void gsm_start(void)
     gsm_conf.uart_initialize = app_bootloader_uart_initialize;
     gsm_conf.gpio.power_key = HW_GSM_POWER_KEY_PIN;
     gsm_conf.gpio.status_pin = HW_GSM_STATUS_PIN;
+    gsm_conf.gpio.reset_pin = HW_GSM_RESET_PIN;
     gsm_conf.serial_tx = app_bootloader_uart_write;
     gsm_conf.serial_rx_flush = app_bootloader_rx_flush;
     gsm_conf.sys_now = sys_get_tick_ms;

@@ -83,7 +83,8 @@ void sys_mbox_free(sys_mbox_t *mbox)
 #endif
   {
     /* Line for breakpoint.  Should never break here! */
-    portNOP();
+    //portNOP();
+    ASSERT(0);
 #if SYS_STATS
     lwip_stats.sys.mbox.err++;
 #endif /* SYS_STATS */

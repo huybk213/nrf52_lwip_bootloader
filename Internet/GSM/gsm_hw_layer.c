@@ -93,6 +93,11 @@ void gsm_hw_polling_task(void)
 
         if (m_gsm_hw_buffer.at_cmd.current_timeout_atc > m_gsm_hw_buffer.at_cmd.timeout_atc)
         {
+            if (strstr((char *)(m_gsm_hw_buffer.at_cmd.recv_buffer.buffer), "ERROR"))
+            {
+                DebugPrint("%s\n", m_gsm_hw_buffer.at_cmd.recv_buffer.buffer);
+            }
+
             m_gsm_hw_buffer.at_cmd.current_timeout_atc = 0;
 
             if (m_gsm_hw_buffer.at_cmd.retry_cnt_atc)
@@ -111,7 +116,7 @@ void gsm_hw_polling_task(void)
             }
             else
             {
-                //DebugPrint("Resend AT : %s\r\n", m_gsm_hw_buffer.at_cmd.cmd);
+                DebugPrint("Resend AT : %s\n", m_gsm_hw_buffer.at_cmd.cmd);
                 m_gsm_hw_config.serial_tx((uint8_t *)m_gsm_hw_buffer.at_cmd.cmd, strlen(m_gsm_hw_buffer.at_cmd.cmd));
             }
         }
@@ -184,7 +189,7 @@ void gsm_hw_send_at_cmd(char *cmd, char *expect_response, uint16_t timeout_ms,
 
     m_gsm_hw_config.serial_tx((uint8_t *)cmd, strlen(cmd));
 
-    //DebugPrint("\r\r\n%s\r\n", cmd);
+    DebugPrint("%s\n", cmd);
 }
 
 uint32_t sio_read(sio_fd_t fd, u8_t *data, u32_t len)
@@ -254,9 +259,12 @@ void gsm_hw_hardreset(gsm_power_on_cb_t cb)
         else
         {
             DebugPrint("GSM previous power state is down\r\n");
+            m_gsm_hw_config.io_set(m_gsm_hw_config.gpio.reset_pin, 0);
             m_last_power_state_is_up = false;
         }
     }
+    
+    DebugPrint("GSM power step %d\r\n", step);
 
     if (m_last_power_state_is_up == false) // Power on module
     {
@@ -300,8 +308,23 @@ void gsm_hw_hardreset(gsm_power_on_cb_t cb)
         case 8:
             step++;
             break;
+        case 9:
+            step++;
+            break;
+         
+        case 10:
+            step++;
+            break;
 
-        case 9: //Powerkey High
+        case 11:
+            step++;
+            break;
+
+        case 12:
+            step++;
+            break;
+
+        case 13: //Powerkey High
             m_gsm_hw_config.io_set(m_gsm_hw_config.gpio.power_key, 0);
             step = 0;
 
@@ -318,7 +341,7 @@ void gsm_hw_hardreset(gsm_power_on_cb_t cb)
                 m_last_power_state_is_up = false;
             }
             break;
-
+    
         default:
             // Shoud never get there
             break;
@@ -332,6 +355,7 @@ void gsm_hw_hardreset(gsm_power_on_cb_t cb)
             DebugPrint("GSM power off\r\n");
             m_gsm_hw_config.uart_initialize();
             m_gsm_hw_config.io_set(m_gsm_hw_config.gpio.power_key, 1);
+            m_gsm_hw_config.io_set(m_gsm_hw_config.gpio.reset_pin, 0);
             step++;
             break;
 
@@ -341,12 +365,24 @@ void gsm_hw_hardreset(gsm_power_on_cb_t cb)
 
         case 2:
             step++;
+            m_gsm_hw_config.io_set(m_gsm_hw_config.gpio.power_key, 0);
             break;
 
         case 3:
-            m_last_power_state_is_up = false;
-            step = 0;
-            GSM_CLEAR_BUFFER();
+            step++;
+            break;
+
+        case 4:
+            if (m_gsm_hw_config.io_get(m_gsm_hw_config.gpio.status_pin))
+            {
+                m_last_power_state_is_up = true;
+            }
+            else
+            {
+                m_last_power_state_is_up = false;
+                step = 0;
+                GSM_CLEAR_BUFFER();   
+            }
             break;
 
         default:

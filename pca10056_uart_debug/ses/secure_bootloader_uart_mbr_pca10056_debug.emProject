@@ -149,9 +149,6 @@
       <file file_name="$(SDK_ROOT)/components/libraries/bootloader/dfu/nrf_dfu_ver_validation.c" />
       <configuration Name="Release" build_exclude_from_build="Yes" />
     </folder>
-    <folder Name="nRF_Serial_DFU">
-      <file file_name="$(SDK_ROOT)/components/libraries/bootloader/serial_dfu/nrf_dfu_serial.c" />
-    </folder>
     <folder Name="nrf_cc310_bl">
       <file file_name="$(SDK_ROOT)/external/nrf_cc310_bl/lib/cortex-m4/hard-float/libnrf_cc310_bl_0.9.13.a" />
     </folder>
@@ -416,12 +413,16 @@
         <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/message_buffer.h" />
       </folder>
     </folder>
+    <folder Name="cpu_utils">
+      <file file_name="../../cpu_utils/cpu_utils.c" />
+      <file file_name="../../cpu_utils/cpu_utils.h" />
+    </folder>
   </project>
   <configuration
     Name="Release"
     arm_linker_heap_size="128000"
     c_preprocessor_definitions="CONFIG_NFCT_PINS_AS_GPIOS;MBEDTLS_CONFIG_FILE=&quot;mbedtls_alt_config.h&quot;"
-    c_user_include_directories=".;./../../app_ota;./../../Internet/GSM;./../../Internet/Inc;./../../Internet/app_mqtt;./../../Internet/OTA;./../../Internet/lwip-2_1_2/src/include;./../../Internet/lwip-2_1_2/src/include/lwip;./../../Internet/lwip-2_1_2/src/include/netif;./../../Internet/lwip-2_1_2/src/include/netif/ppp;./../../Internet/lwip-2_1_2/src/lwip;./../../Internet/lwip-2_1_2/src/lwip/priv;./../../Internet/lwip-2_1_2/src/lwip/apps;./../../Internet/lwip-2_1_2/src/prot;./../../Internet/aws_iot;./../../Internet/aws_iot/cert;./../../Internet/arch;./../../Internet/arch/CMSIS_RTOS;$(SDK_ROOT)/components/libraries/uart;$(SDK_ROOT)/components/libraries/timer;$(SDK_ROOT)/components/libraries/fifo;$(SDK_ROOT)/external/mbedtls/include;$(SDK_ROOT)/external/mbedtls/include/mbedtls;$(SDK_ROOT)/external/mbedtls/config;$(SDK_ROOT)/external/freertos/source/include;$(SDK_ROOT)/external/freertos/portable/ARM/nrf52;$(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52"
+    c_user_include_directories=".;./../../app_ota;./../../Internet/GSM;./../../Internet/Inc;./../../Internet/app_mqtt;./../../Internet/OTA;./../../Internet/lwip-2_1_2/src/include;./../../Internet/lwip-2_1_2/src/include/lwip;./../../Internet/lwip-2_1_2/src/include/netif;./../../Internet/lwip-2_1_2/src/include/netif/ppp;./../../Internet/lwip-2_1_2/src/lwip;./../../Internet/lwip-2_1_2/src/lwip/priv;./../../Internet/lwip-2_1_2/src/lwip/apps;./../../Internet/lwip-2_1_2/src/prot;./../../Internet/aws_iot;./../../Internet/aws_iot/cert;./../../Internet/arch;./../../Internet/arch/CMSIS_RTOS;./../../cpu_utils;$(SDK_ROOT)/components/libraries/uart;$(SDK_ROOT)/components/libraries/timer;$(SDK_ROOT)/components/libraries/fifo;$(SDK_ROOT)/external/mbedtls/include;$(SDK_ROOT)/external/mbedtls/include/mbedtls;$(SDK_ROOT)/external/mbedtls/config;$(SDK_ROOT)/external/freertos/source/include;$(SDK_ROOT)/external/freertos/portable/ARM/nrf52;$(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52"
     gcc_optimization_level="None"
     link_time_optimization="No" />
   <configuration Name="Common" arm_linker_heap_size="128000" />
