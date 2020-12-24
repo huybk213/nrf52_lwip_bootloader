@@ -116,16 +116,16 @@ static int tls_init(void)
     }
     inited = true;
 
-    char *p = (char *)calloc(100000, 1);
-    if (p == NULL)
-    {
-        printf("calloc failed\r\n");
-    }
-    else
-    {
-        printf("calloc success\r\n");
-        free(p);
-    }
+    //char *p = (char *)calloc(100000, 1);
+    //if (p == NULL)
+    //{
+    //    printf("calloc failed\r\n");
+    //}
+    //else
+    //{
+    //    printf("calloc success\r\n");
+    //    free(p);
+    //}
 
     DebugPrint("TLS initialize\r\n");
 
@@ -396,12 +396,16 @@ static int8_t mqtt_client_connect_to_broker(mqtt_client_t *client)
             NULL, NULL, 0, 0              //Will topic, will msg, will QoS, will retain
         };
 
+#if MQTT_WITH_SSL
     if (client_info.tls_config == NULL)
+    {
         client_info.tls_config = altcp_tls_create_config_client_2wayauth((const u8_t *)aws_certificate_get_root_ca(), strlen((char *)aws_certificate_get_root_ca()) + 1,
                                                                          (const u8_t *)aws_certificate_get_client_key(), strlen((char *)aws_certificate_get_client_key()) + 1,
                                                                          NULL, NULL,
                                                                          (const u8_t *)aws_certificate_get_client_cert(), strlen((char *)aws_certificate_get_client_cert()) + 1);
-
+        ASSERT(client_info.tls_config);
+    }
+#endif /* MQTT_WITH_SSL */
     /* Minimal amount of information required is client identifier, so set it here */
     //client_info.client_user = "";
     //client_info.client_pass = "";

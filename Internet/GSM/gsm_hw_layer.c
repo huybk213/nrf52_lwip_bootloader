@@ -184,7 +184,7 @@ void gsm_hw_send_at_cmd(char *cmd, char *expect_response, uint16_t timeout_ms,
 
     m_gsm_hw_config.serial_tx((uint8_t *)cmd, strlen(cmd));
 
-    //DebugPrint("\r\r\n%s\r\n", cmd);
+    DebugPrint("%s\n", cmd);
 }
 
 uint32_t sio_read(sio_fd_t fd, u8_t *data, u32_t len)
