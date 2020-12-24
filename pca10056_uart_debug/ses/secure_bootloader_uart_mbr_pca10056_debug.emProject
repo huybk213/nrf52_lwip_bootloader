@@ -85,8 +85,8 @@
       </file>
       <file file_name="$(SDK_ROOT)/components/libraries/fifo/app_fifo.c" />
       <file file_name="$(SDK_ROOT)/components/libraries/timer/app_timer.c" />
-      <file file_name="../../../nRF5_SDK_17.0.0_9d13099/integration/nrfx/legacy/nrf_drv_clock.c" />
-      <file file_name="../../../nRF5_SDK_17.0.0_9d13099/modules/nrfx/drivers/src/nrfx_clock.c" />
+      <file file_name="$(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_clock.c" />
+      <file file_name="$(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_clock.c" />
     </folder>
     <folder Name="nRF_Drivers">
       <file file_name="$(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_uart.c" />
@@ -251,24 +251,24 @@
           </folder>
         </folder>
         <folder Name="api">
-          <file file_name="../../internet/lwip-2_1_2/src/api/api_lib.c" />
-          <file file_name="../../internet/lwip-2_1_2/src/api/api_msg.c" />
-          <file file_name="../../internet/lwip-2_1_2/src/api/err.c" />
-          <file file_name="../../internet/lwip-2_1_2/src/api/if_api.c" />
-          <file file_name="../../internet/lwip-2_1_2/src/api/netbuf.c" />
-          <file file_name="../../internet/lwip-2_1_2/src/api/netdb.c" />
-          <file file_name="../../internet/lwip-2_1_2/src/api/netifapi.c" />
-          <file file_name="../../internet/lwip-2_1_2/src/api/sockets.c" />
-          <file file_name="../../internet/lwip-2_1_2/src/api/tcpip.c" />
+          <file file_name="../../Internet/lwip-2_1_2/src/api/api_lib.c" />
+          <file file_name="../../Internet/lwip-2_1_2/src/api/api_msg.c" />
+          <file file_name="../../Internet/lwip-2_1_2/src/api/err.c" />
+          <file file_name="../../Internet/lwip-2_1_2/src/api/if_api.c" />
+          <file file_name="../../Internet/lwip-2_1_2/src/api/netbuf.c" />
+          <file file_name="../../Internet/lwip-2_1_2/src/api/netdb.c" />
+          <file file_name="../../Internet/lwip-2_1_2/src/api/netifapi.c" />
+          <file file_name="../../Internet/lwip-2_1_2/src/api/sockets.c" />
+          <file file_name="../../Internet/lwip-2_1_2/src/api/tcpip.c" />
         </folder>
         <folder Name="arch">
           <folder Name="CMSIS_RTOS">
-            <file file_name="../../internet/arch/CMSIS_RTOS/cmsis_os.c" />
-            <file file_name="../../internet/arch/CMSIS_RTOS/cmsis_os.h" />
+            <file file_name="../../Internet/arch/CMSIS_RTOS/cmsis_os.c" />
+            <file file_name="../../Internet/arch/CMSIS_RTOS/cmsis_os.h" />
           </folder>
-          <file file_name="../../internet/lwip-2_1_2/src/include/arch/sys_arch.c" />
-          <file file_name="../../internet/lwip-2_1_2/src/include/arch/sys_arch.h" />
-          <file file_name="../../internet/arch/cc.h" />
+          <file file_name="../../Internet/lwip-2_1_2/src/include/arch/sys_arch.c" />
+          <file file_name="../../Internet/lwip-2_1_2/src/include/arch/sys_arch.h" />
+          <file file_name="../../Internet/arch/cc.h" />
         </folder>
       </folder>
       <folder Name="app_ota">
@@ -289,7 +289,9 @@
         <file file_name="../../Internet/app_mqtt/mqtt_user.h" />
       </folder>
       <folder Name="aws_iot">
-        <file file_name="../../Internet/aws_iot/cert/aws_certificate.c" />
+        <file file_name="../../Internet/aws_iot/cert/aws_certificate.c">
+          <configuration Name="Release" build_exclude_from_build="Yes" />
+        </file>
         <file file_name="../../Internet/aws_iot/cert/aws_certificate.h" />
       </folder>
     </folder>
@@ -382,35 +384,35 @@
     <configuration Name="Release" arm_linker_heap_size="8192" />
     <folder Name="FreeRTOS">
       <folder Name="src">
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/croutine.c" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/event_groups.c" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/list.c" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/queue.c" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/stream_buffer.c" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/tasks.c" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/timers.c" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/portable/MemMang/heap_4.c" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/portable/CMSIS/nrf52/port_cmsis.c" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/portable/CMSIS/nrf52/port_cmsis_systick.c" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/projdefs.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/stdint.readme" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/portable/GCC/nrf52/port.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/croutine.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/event_groups.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/list.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/queue.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/stream_buffer.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/tasks.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/timers.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/portable/MemMang/heap_4.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52/port_cmsis.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52/port_cmsis_systick.c" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/projdefs.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/stdint.readme" />
+        <file file_name="$(SDK_ROOT)/external/freertos/portable/GCC/nrf52/port.c" />
       </folder>
       <folder Name="inc">
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/croutine.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/deprecated_definitions.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/event_groups.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/list.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/portable/CMSIS/nrf52/portmacro_cmsis.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/queue.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/semphr.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/StackMacros.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/stack_macros.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/stream_buffer.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/timers.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/task.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/FreeRTOS.h" />
-        <file file_name="../../../nRF5_SDK_17.0.0_9d13099/external/freertos/source/include/message_buffer.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/croutine.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/deprecated_definitions.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/event_groups.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/list.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52/portmacro_cmsis.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/queue.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/semphr.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/StackMacros.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/stack_macros.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/stream_buffer.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/timers.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/task.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/FreeRTOS.h" />
+        <file file_name="$(SDK_ROOT)/external/freertos/source/include/message_buffer.h" />
       </folder>
     </folder>
     <folder Name="cpu_utils">
