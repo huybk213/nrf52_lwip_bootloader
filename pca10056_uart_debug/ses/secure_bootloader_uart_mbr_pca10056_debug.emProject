@@ -253,6 +253,26 @@
             <file file_name="../../Internet/lwip-2_1_2/src/core/altcp_tcp.c" />
           </folder>
         </folder>
+        <folder Name="api">
+          <file file_name="../../internet/lwip-2_1_2/src/api/api_lib.c" />
+          <file file_name="../../internet/lwip-2_1_2/src/api/api_msg.c" />
+          <file file_name="../../internet/lwip-2_1_2/src/api/err.c" />
+          <file file_name="../../internet/lwip-2_1_2/src/api/if_api.c" />
+          <file file_name="../../internet/lwip-2_1_2/src/api/netbuf.c" />
+          <file file_name="../../internet/lwip-2_1_2/src/api/netdb.c" />
+          <file file_name="../../internet/lwip-2_1_2/src/api/netifapi.c" />
+          <file file_name="../../internet/lwip-2_1_2/src/api/sockets.c" />
+          <file file_name="../../internet/lwip-2_1_2/src/api/tcpip.c" />
+        </folder>
+        <folder Name="arch">
+          <folder Name="CMSIS_RTOS">
+            <file file_name="../../internet/arch/CMSIS_RTOS/cmsis_os.c" />
+            <file file_name="../../internet/arch/CMSIS_RTOS/cmsis_os.h" />
+          </folder>
+          <file file_name="../../internet/lwip-2_1_2/src/include/arch/sys_arch.c" />
+          <file file_name="../../internet/lwip-2_1_2/src/include/arch/sys_arch.h" />
+          <file file_name="../../internet/arch/cc.h" />
+        </folder>
       </folder>
       <folder Name="app_ota">
         <file file_name="../../Internet/OTA/update_firmware.c" />
@@ -401,7 +421,7 @@
     Name="Release"
     arm_linker_heap_size="128000"
     c_preprocessor_definitions="CONFIG_NFCT_PINS_AS_GPIOS;MBEDTLS_CONFIG_FILE=&quot;mbedtls_alt_config.h&quot;"
-    c_user_include_directories=".;./../../app_ota;./../../Internet/GSM;./../../Internet/Inc;./../../Internet/app_mqtt;./../../Internet/OTA;./../../Internet/lwip-2_1_2/src/include;./../../Internet/lwip-2_1_2/src/include/lwip;./../../Internet/lwip-2_1_2/src/include/netif;./../../Internet/lwip-2_1_2/src/include/netif/ppp;./../../Internet/lwip-2_1_2/src/lwip;./../../Internet/lwip-2_1_2/src/lwip/priv;./../../Internet/lwip-2_1_2/src/lwip/apps;./../../Internet/lwip-2_1_2/src/prot;./../../Internet/aws_iot;./../../Internet/aws_iot/cert;$(SDK_ROOT)/components/libraries/uart;$(SDK_ROOT)/components/libraries/timer;$(SDK_ROOT)/components/libraries/fifo;$(SDK_ROOT)/external/mbedtls/include;$(SDK_ROOT)/external/mbedtls/include/mbedtls;$(SDK_ROOT)/external/mbedtls/config;$(SDK_ROOT)/external/freertos/source/include;$(SDK_ROOT)/external/freertos/portable/ARM/nrf52;$(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52"
+    c_user_include_directories=".;./../../app_ota;./../../Internet/GSM;./../../Internet/Inc;./../../Internet/app_mqtt;./../../Internet/OTA;./../../Internet/lwip-2_1_2/src/include;./../../Internet/lwip-2_1_2/src/include/lwip;./../../Internet/lwip-2_1_2/src/include/netif;./../../Internet/lwip-2_1_2/src/include/netif/ppp;./../../Internet/lwip-2_1_2/src/lwip;./../../Internet/lwip-2_1_2/src/lwip/priv;./../../Internet/lwip-2_1_2/src/lwip/apps;./../../Internet/lwip-2_1_2/src/prot;./../../Internet/aws_iot;./../../Internet/aws_iot/cert;./../../Internet/arch;./../../Internet/arch/CMSIS_RTOS;$(SDK_ROOT)/components/libraries/uart;$(SDK_ROOT)/components/libraries/timer;$(SDK_ROOT)/components/libraries/fifo;$(SDK_ROOT)/external/mbedtls/include;$(SDK_ROOT)/external/mbedtls/include/mbedtls;$(SDK_ROOT)/external/mbedtls/config;$(SDK_ROOT)/external/freertos/source/include;$(SDK_ROOT)/external/freertos/portable/ARM/nrf52;$(SDK_ROOT)/external/freertos/portable/CMSIS/nrf52"
     gcc_optimization_level="None"
     link_time_optimization="No" />
   <configuration Name="Common" arm_linker_heap_size="128000" />

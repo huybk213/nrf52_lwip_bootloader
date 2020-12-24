@@ -45,7 +45,9 @@
 #define BIG_ENDIAN 4321
 #endif
 
-//#include "arch/cc.h"
+#if NO_SYS == 0
+#include "cc.h"
+#endif
 
 /**
  * @defgroup compiler_abstraction Compiler/platform abstraction
